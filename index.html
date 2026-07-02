@@ -1,0 +1,1361 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Price to Prediction Distributions Mapper</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #090d14;
+      --panel: #101722;
+      --panel-soft: #141d2a;
+      --ink: #edf3ff;
+      --muted: #8d9bb0;
+      --line: #263244;
+      --accent: #42a5ff;
+      --accent-soft: rgba(66, 165, 255, 0.16);
+      --low: #35c98f;
+      --high: #ff6b73;
+      --shadow: 0 20px 70px rgba(0, 0, 0, 0.34);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    main {
+      width: min(1180px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 28px 0;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .chart-panel,
+    .controls {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 0;
+      box-shadow: var(--shadow);
+    }
+
+    .chart-panel {
+      min-width: 0;
+      padding: 22px;
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 24px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .faq-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 34px;
+      padding: 0 14px;
+      border: 1px solid #344258;
+      background: #0b111a;
+      color: #c9d6e7;
+      font-size: 13px;
+      font-weight: 650;
+      text-decoration: none;
+    }
+
+    .faq-button:hover,
+    .faq-button:focus-visible {
+      border-color: var(--accent);
+      color: var(--ink);
+      outline: none;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .plots {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .plot-block {
+      display: grid;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .plot-title {
+      color: #c9d6e7;
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .chart-wrap {
+      width: 100%;
+      height: 720px;
+      min-height: 0;
+    }
+
+    .strike-wrap {
+      width: 100%;
+      height: 720px;
+      min-height: 0;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 1px solid var(--line);
+      border-radius: 0;
+      background: #0c121b;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .swatch {
+      width: 18px;
+      height: 3px;
+      border-radius: 0;
+      background: var(--accent);
+    }
+
+    .swatch.band {
+      height: 10px;
+      background: var(--accent-soft);
+      border: 1px solid rgba(66, 165, 255, 0.28);
+    }
+
+    .swatch.low { background: var(--low); }
+    .swatch.high { background: var(--high); }
+    .swatch.strike { background: #ffcc66; }
+    .swatch.fair { background: var(--low); }
+    .swatch.t { width: 10px; height: 10px; border-radius: 0; background: var(--accent); }
+
+    .controls {
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      align-items: start;
+    }
+
+    .controls h2 {
+      grid-column: 1 / -1;
+      margin: 0;
+      font-size: 17px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 0;
+    }
+
+    .control-column {
+      display: grid;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    label {
+      color: #c9d6e7;
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 18px;
+      appearance: none;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 6px;
+      background: #263244;
+      border: 1px solid #344258;
+      border-radius: 0;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      margin-top: -5px;
+      background: var(--accent);
+      border: 1px solid #8fd0ff;
+      border-radius: 0;
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 6px;
+      background: #263244;
+      border: 1px solid #344258;
+      border-radius: 0;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      background: var(--accent);
+      border: 1px solid #8fd0ff;
+      border-radius: 0;
+    }
+
+    .number-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    input[type="number"],
+    select {
+      width: 100%;
+      height: 40px;
+      border: 1px solid #344258;
+      border-radius: 0;
+      padding: 0 10px;
+      background: #0b111a;
+      color: var(--ink);
+      font: inherit;
+      font-variant-numeric: tabular-nums;
+      outline: none;
+    }
+
+    select {
+      appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, #8d9bb0 50%), linear-gradient(135deg, #8d9bb0 50%, transparent 50%);
+      background-position: calc(100% - 16px) 16px, calc(100% - 11px) 16px;
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
+      padding-right: 30px;
+    }
+
+    input[type="number"]:focus,
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(66, 165, 255, 0.16);
+    }
+
+    .unit {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .info-panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 0;
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    .info-panel h2 {
+      margin: 0 0 14px;
+      font-size: 17px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .info-panel h3 {
+      margin: 0 0 8px;
+      color: #c9d6e7;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .info-panel ul,
+    .info-panel ol {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .info-panel li + li { margin-top: 6px; }
+    .info-panel code { color: var(--ink); }
+
+    @media (max-width: 860px) {
+      main {
+        width: min(100vw - 20px, 680px);
+        padding: 18px 0;
+      }
+
+      .shell { grid-template-columns: 1fr; }
+      .plots { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+      .controls { grid-template-columns: 1fr; }
+      .info-grid { grid-template-columns: 1fr; }
+      .chart-panel, .controls { padding: 16px; }
+      .chart-header { display: grid; }
+      .chart-wrap { height: 560px; }
+      .strike-wrap { height: 560px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="shell" aria-label="Prediction market bps distribution tool">
+      <div class="chart-panel">
+        <div class="chart-header">
+          <div>
+            <h1>Price to Prediction Distributions Mapper</h1>
+          </div>
+          <a class="faq-button" href="#info">FAQ</a>
+        </div>
+
+        <div class="plots">
+          <div class="plot-block">
+            <div class="plot-title">Price Distribution</div>
+            <div class="chart-wrap">
+              <canvas id="distributionChart" width="760" height="430" aria-label="Vertical Gaussian distribution chart in bps"></canvas>
+            </div>
+            <div class="legend" aria-label="Price distribution legend">
+              <span class="legend-item"><span class="swatch"></span>Density</span>
+              <span class="legend-item"><span class="swatch band"></span>+/- 1 sigma</span>
+              <span class="legend-item"><span class="swatch low"></span>Below current</span>
+              <span class="legend-item"><span class="swatch high"></span>Above current</span>
+            </div>
+          </div>
+
+          <div class="plot-block">
+            <div class="plot-title">Prediction Distribution</div>
+            <div class="strike-wrap">
+              <canvas id="strikeChart" width="360" height="430" aria-label="Vertical strike price chart from 0 to 100 cents"></canvas>
+            </div>
+            <div class="legend" aria-label="Prediction distribution legend">
+              <span class="legend-item"><span class="swatch"></span>Prediction density</span>
+              <span class="legend-item"><span class="swatch strike"></span>Strike 50c</span>
+              <span class="legend-item"><span class="swatch fair"></span>Fair price</span>
+              <span class="legend-item"><span class="swatch t"></span>T handle</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="controls" aria-label="Distribution controls">
+        <h2>Controls</h2>
+
+        <div class="control-column">
+          <div class="field">
+            <label for="startPriceInput">Current price</label>
+            <input id="startPriceInput" type="number" min="0" step="1" value="60000" inputmode="numeric">
+          </div>
+
+          <div class="field">
+            <label for="strikePriceInput">Strike price</label>
+            <input id="strikePriceInput" type="number" min="0" step="1" value="60000" inputmode="numeric">
+          </div>
+        </div>
+
+        <div class="control-column">
+          <div class="field">
+            <label for="sigmaSlider">Sigma</label>
+            <input id="sigmaSlider" type="range" min="1" max="1000" step="1" value="250">
+            <div class="range-labels">
+              <span>1 bps</span>
+              <span>1000 bps</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="sigmaInput">Sigma value</label>
+            <div class="number-row">
+              <input id="sigmaInput" type="number" min="1" max="1000" step="1" value="250" inputmode="numeric">
+              <span class="unit">bps</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-column">
+          <div class="field">
+            <label for="tSlider">T</label>
+            <input id="tSlider" type="range" min="0" max="1" step="0.01" value="0.5">
+            <div class="range-labels">
+              <span>0</span>
+              <span id="tValue">0.50</span>
+              <span>1</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="priceDistributionSelect">Price Distribution</label>
+            <select id="priceDistributionSelect" aria-label="Price Distribution">
+              <option value="gaussian" selected>Gaussian</option>
+              <option value="studentT">Student-t</option>
+              <option value="laplacian">Laplacian</option>
+              <option value="logistic">Logistic</option>
+            </select>
+          </div>
+        </div>
+      </aside>
+
+      <section id="info" class="info-panel" aria-label="FAQ and model information">
+        <h2>Info</h2>
+        <div class="info-grid">
+          <div>
+            <h3>Controls</h3>
+            <ul>
+              <li>Use Current price and Strike price inputs to set the underlying price and the binary strike.</li>
+              <li>Drag the Current and Strike horizontal lines on the Price Distribution chart to update those prices directly.</li>
+              <li>Drag either +1 sigma or -1 sigma point on the Price Distribution chart to change Sigma. Both points control the same sigma value.</li>
+              <li>Use the Sigma slider or number input for exact sigma values from 1 to 1000 bps.</li>
+              <li>Use the T slider below, or drag the T point on the top axis of the Prediction Distribution chart.</li>
+              <li>Use the mouse wheel over the left bps axis or right price axis of the Price Distribution chart to zoom the visible price range.</li>
+              <li>Drag the right price axis on the Price Distribution chart to pan the visible price range up or down.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Formulas and Mapping</h3>
+            <ol>
+              <li>Prices are modeled in log-bps space: <code>price = current * exp(bps / 10000)</code>.</li>
+              <li>The plotted remaining volatility is <code>sigma_plot = sigma * sqrt(1 - T)</code>.</li>
+              <li>The Price Distribution chart draws the selected density family over bps using <code>sigma_plot</code>: Gaussian, Student-t, Laplacian, or Logistic. Non-Gaussian families are standardized so sigma remains the bps standard deviation.</li>
+              <li>The fair binary prediction price is <code>100 * (1 - F(strike_bps / sigma_plot))</code>, where <code>F</code> is the selected distribution CDF.</li>
+              <li>The Prediction Distribution uses an analytic change of variables from underlying bps to binary fair price, so it does not depend on the visible chart scale.</li>
+              <li>The resulting density is evaluated over 0c to 100c and normalized so the total area under the curve is 1.</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const canvas = document.getElementById('distributionChart');
+    const context = canvas.getContext('2d');
+    const strikeCanvas = document.getElementById('strikeChart');
+    const strikeContext = strikeCanvas.getContext('2d');
+    const startPriceInput = document.getElementById('startPriceInput');
+    const strikePriceInput = document.getElementById('strikePriceInput');
+    const sigmaSlider = document.getElementById('sigmaSlider');
+    const sigmaInput = document.getElementById('sigmaInput');
+    const tSlider = document.getElementById('tSlider');
+    const tValue = document.getElementById('tValue');
+    const priceDistributionSelect = document.getElementById('priceDistributionSelect');
+    const startPriceDisplay = document.getElementById('startPriceDisplay');
+    const strikePriceDisplay = document.getElementById('strikePriceDisplay');
+    const fairPriceDisplay = document.getElementById('fairPriceDisplay');
+    const orderbookAreaDisplay = document.getElementById('orderbookAreaDisplay');
+    const plotSigmaDisplay = document.getElementById('plotSigmaDisplay');
+    const oneSigmaBand = document.getElementById('oneSigmaBand');
+    const twoSigmaBand = document.getElementById('twoSigmaBand');
+    const visibleRange = document.getElementById('visibleRange');
+
+    const minSigmaBps = 1;
+    const maxSigmaBps = 1000;
+    const minVisibleBps = 50;
+    const maxVisibleBps = 10000;
+    const bpsSteps = 801;
+    const orderbookBins = 501;
+    let drawFrameId = 0;
+    const chartState = {
+      visibleBps: 1000,
+      centerPrice: null,
+      axisZones: null,
+      lineZones: null,
+      sigmaZones: null,
+      dragTarget: null,
+      axisDrag: null,
+      lastGeometry: null,
+      strikeGeometry: null,
+      tDragging: false
+    };
+
+    function clampSigma(value) {
+      const numericValue = Number(value);
+      if (!Number.isFinite(numericValue)) return Number(sigmaSlider.value);
+      return Math.min(maxSigmaBps, Math.max(minSigmaBps, Math.round(numericValue)));
+    }
+
+    function getStartPrice() {
+      const value = Number(startPriceInput.value);
+      return Number.isFinite(value) && value >= 0 ? value : 60000;
+    }
+
+    function getStrikePrice() {
+      const value = Number(strikePriceInput.value);
+      return Number.isFinite(value) && value >= 0 ? value : 60000;
+    }
+
+    function getT() {
+      const value = Number(tSlider.value);
+      return Number.isFinite(value) ? Math.min(1, Math.max(0, value)) : 0.5;
+    }
+
+    function getRemainingSigmaBps() {
+      return Number(sigmaSlider.value) * Math.sqrt(1 - getT());
+    }
+
+    function densityAt(bps, sigmaBps, model = getDistributionModel()) {
+      const zScore = bps / sigmaBps;
+      return model.pdf(zScore) / sigmaBps;
+    }
+
+    function priceAtBps(startPrice, bps) {
+      return startPrice * Math.exp(bps / 10000);
+    }
+
+    function bpsForPrice(startPrice, price) {
+      if (startPrice <= 0 || price <= 0) return 0;
+      return Math.log(price / startPrice) * 10000;
+    }
+
+    function normalCdf(value) {
+      const sign = value < 0 ? -1 : 1;
+      const x = Math.abs(value) / Math.sqrt(2);
+      const t = 1 / (1 + 0.3275911 * x);
+      const a1 = 0.254829592;
+      const a2 = -0.284496736;
+      const a3 = 1.421413741;
+      const a4 = -1.453152027;
+      const a5 = 1.061405429;
+      const erf = sign * (1 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x));
+      return 0.5 * (1 + erf);
+    }
+
+    function normalPdf(value) {
+      return Math.exp(-0.5 * value * value) / Math.sqrt(2 * Math.PI);
+    }
+
+    function inverseNormalCdf(probability) {
+      const p = Math.min(1 - 1e-12, Math.max(1e-12, probability));
+      const a = [-39.69683028665376, 220.9460984245205, -275.9285104469687, 138.357751867269, -30.66479806614716, 2.506628277459239];
+      const b = [-54.47609879822406, 161.5858368580409, -155.6989798598866, 66.80131188771972, -13.28068155288572];
+      const c = [-0.007784894002430293, -0.3223964580411365, -2.400758277161838, -2.549732539343734, 4.374664141464968, 2.938163982698783];
+      const d = [0.007784695709041462, 0.3224671290700398, 2.445134137142996, 3.754408661907416];
+      const lower = 0.02425;
+      const upper = 1 - lower;
+
+      if (p < lower) {
+        const q = Math.sqrt(-2 * Math.log(p));
+        return (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) /
+          ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
+      }
+
+      if (p > upper) {
+        const q = Math.sqrt(-2 * Math.log(1 - p));
+        return -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) /
+          ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
+      }
+
+      const q = p - 0.5;
+      const r = q * q;
+      return (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q /
+        (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1);
+    }
+
+    function studentTCdf3(value) {
+      const y = value / Math.sqrt(3);
+      return 0.5 + (Math.atan(y) + y / (1 + y * y)) / Math.PI;
+    }
+
+    function laplaceCdf(value) {
+      return value < 0 ? 0.5 * Math.exp(value) : 1 - 0.5 * Math.exp(-value);
+    }
+
+    function logisticCdf(value) {
+      return 1 / (1 + Math.exp(-value));
+    }
+
+    function inverseByBisection(probability, cdf) {
+      const target = Math.min(1 - 1e-12, Math.max(1e-12, probability));
+      let low = -1;
+      let high = 1;
+
+      while (cdf(low) > target) low *= 2;
+      while (cdf(high) < target) high *= 2;
+
+      for (let index = 0; index < 48; index += 1) {
+        const mid = (low + high) / 2;
+        if (cdf(mid) < target) low = mid;
+        else high = mid;
+      }
+
+      return (low + high) / 2;
+    }
+
+    const distributionModels = {
+      gaussian: {
+        pdf: normalPdf,
+        cdf: normalCdf,
+        inverseCdf: inverseNormalCdf
+      },
+      studentT: {
+        pdf: (value) => {
+          const scaled = value * Math.sqrt(3);
+          return Math.sqrt(3) * (2 / (Math.PI * Math.sqrt(3))) * (1 + (scaled * scaled) / 3) ** -2;
+        },
+        cdf: (value) => studentTCdf3(value * Math.sqrt(3)),
+        inverseCdf: (probability) => inverseByBisection(probability, (value) => studentTCdf3(value * Math.sqrt(3)))
+      },
+      laplacian: {
+        pdf: (value) => (Math.SQRT2 / 2) * Math.exp(-Math.SQRT2 * Math.abs(value)),
+        cdf: (value) => laplaceCdf(Math.SQRT2 * value),
+        inverseCdf: (probability) => {
+          const p = Math.min(1 - 1e-12, Math.max(1e-12, probability));
+          const raw = p < 0.5 ? Math.log(2 * p) : -Math.log(2 * (1 - p));
+          return raw / Math.SQRT2;
+        }
+      },
+      logistic: {
+        pdf: (value) => {
+          const scale = Math.sqrt(3) / Math.PI;
+          const raw = value / scale;
+          const cdf = logisticCdf(raw);
+          return cdf * (1 - cdf) / scale;
+        },
+        cdf: (value) => logisticCdf(value / (Math.sqrt(3) / Math.PI)),
+        inverseCdf: (probability) => {
+          const p = Math.min(1 - 1e-12, Math.max(1e-12, probability));
+          return (Math.sqrt(3) / Math.PI) * Math.log(p / (1 - p));
+        }
+      }
+    };
+
+    function getDistributionModel() {
+      return distributionModels[priceDistributionSelect.value] || distributionModels.gaussian;
+    }
+
+    function calculateFairCents() {
+      const currentPrice = getStartPrice();
+      const strikePrice = getStrikePrice();
+      const sigmaBps = Math.max(0.000001, getRemainingSigmaBps());
+      const strikeBps = bpsForPrice(currentPrice, strikePrice);
+      const model = getDistributionModel();
+      return (1 - model.cdf(strikeBps / sigmaBps)) * 100;
+    }
+
+    function binaryPriceCents(samplePrice, strikePrice, remainingSigmaBps) {
+      if (remainingSigmaBps <= 0.000001) return samplePrice > strikePrice ? 100 : 0;
+      const strikeDistanceBps = bpsForPrice(samplePrice, strikePrice);
+      const model = getDistributionModel();
+      return (1 - model.cdf(strikeDistanceBps / remainingSigmaBps)) * 100;
+    }
+
+    function buildOrderbookDistribution(strikePrice, remainingSigmaBps) {
+      const centsStep = 100 / (orderbookBins - 1);
+      const weights = new Float64Array(orderbookBins);
+      const currentPrice = getStartPrice();
+      const sigmaBps = Math.max(0.000001, remainingSigmaBps);
+      const strikeBps = bpsForPrice(currentPrice, strikePrice);
+      const model = getDistributionModel();
+
+      for (let index = 0; index < weights.length; index += 1) {
+        const cents = index * centsStep;
+        const probability = Math.min(1 - 1e-6, Math.max(1e-6, cents / 100));
+        const quantile = model.inverseCdf(1 - probability);
+        const underlyingBps = strikeBps - sigmaBps * quantile;
+        const underlyingDensity = densityAt(underlyingBps, sigmaBps, model);
+        const slopeCentsPerBps = (100 / sigmaBps) * model.pdf(quantile);
+        weights[index] = underlyingDensity / Math.max(1e-12, slopeCentsPerBps);
+      }
+
+      let rawArea = 0;
+      for (let index = 0; index < weights.length; index += 1) rawArea += weights[index] * centsStep;
+      rawArea ||= 1;
+
+      let maxWeight = 0;
+      let area = 0;
+      for (let index = 0; index < weights.length; index += 1) {
+        weights[index] /= rawArea;
+        maxWeight = Math.max(maxWeight, weights[index]);
+        area += weights[index] * centsStep;
+      }
+
+      return {
+        weights,
+        centsStep,
+        maxWeight,
+        area,
+        zeroMassDensity: weights[0],
+        hundredMassDensity: weights[weights.length - 1]
+      };
+    }
+
+    function requestDrawDistribution() {
+      if (drawFrameId) return;
+      drawFrameId = requestAnimationFrame(() => {
+        drawFrameId = 0;
+        drawDistribution();
+      });
+    }
+
+    function formatNumber(value) {
+      return Math.round(value).toLocaleString('en-US');
+    }
+
+    function formatBps(value) {
+      const rounded = Number(value.toFixed(2));
+      return `${rounded > 0 ? '+' : ''}${rounded.toFixed(2)}`;
+    }
+
+    function syncSigma(value) {
+      const sigmaBps = clampSigma(value);
+      sigmaSlider.value = sigmaBps;
+      sigmaInput.value = sigmaBps;
+      requestDrawDistribution();
+    }
+
+    function prepareCanvas(targetCanvas, targetContext) {
+      const ratio = window.devicePixelRatio || 1;
+      const rect = targetCanvas.getBoundingClientRect();
+      const pixelWidth = Math.round(rect.width * ratio);
+      const pixelHeight = Math.round(rect.height * ratio);
+      if (targetCanvas.width !== pixelWidth || targetCanvas.height !== pixelHeight) {
+        targetCanvas.width = pixelWidth;
+        targetCanvas.height = pixelHeight;
+      }
+      targetContext.setTransform(ratio, 0, 0, ratio, 0, 0);
+      return { width: rect.width, height: rect.height };
+    }
+
+    function drawDistribution() {
+      const { width, height } = prepareCanvas(canvas, context);
+      const padding = { top: 28, right: 78, bottom: 72, left: 92 };
+      const plotWidth = width - padding.left - padding.right;
+      const plotHeight = height - padding.top - padding.bottom;
+      const configuredSigmaBps = Number(sigmaSlider.value);
+      const sigmaBps = Math.max(0.000001, getRemainingSigmaBps());
+      const remainingSigmaBps = Math.max(0.000001, getRemainingSigmaBps());
+      const startPrice = getStartPrice();
+      const strikePrice = getStrikePrice();
+      if (chartState.centerPrice === null) chartState.centerPrice = startPrice;
+      chartState.centerPrice = Math.max(1, chartState.centerPrice);
+      const halfPriceRange = chartState.centerPrice * chartState.visibleBps / 10000;
+      const lowerPrice = Math.max(0, chartState.centerPrice - halfPriceRange);
+      const upperPrice = chartState.centerPrice + halfPriceRange;
+      const model = getDistributionModel();
+      const peak = densityAt(0, sigmaBps, model);
+      const xMax = peak * 1.14;
+
+      const points = Array.from({ length: bpsSteps }, (_, index) => {
+        const price = lowerPrice + (index / (bpsSteps - 1)) * (upperPrice - lowerPrice);
+        const bps = bpsForPrice(startPrice, price);
+        return { price, bps, density: densityAt(bps, sigmaBps, model) };
+      });
+
+      const xFor = (density) => padding.left + (density / xMax) * plotWidth;
+      const yForPrice = (price) => padding.top + ((upperPrice - price) / (upperPrice - lowerPrice)) * plotHeight;
+      const baseline = padding.left;
+      chartState.axisZones = {
+        top: padding.top,
+        bottom: padding.top + plotHeight,
+        bpsLeft: 0,
+        bpsRight: padding.left,
+        priceLeft: padding.left + plotWidth,
+        priceRight: width
+      };
+      chartState.lastGeometry = { padding, plotWidth, plotHeight, width, height, lowerPrice, upperPrice, yForPrice };
+
+      context.clearRect(0, 0, width, height);
+      context.fillStyle = '#0c121b';
+      context.fillRect(0, 0, width, height);
+
+      drawGrid(width, height, padding, plotWidth, plotHeight, xFor, yForPrice, xMax, startPrice, lowerPrice, upperPrice);
+      drawSigmaBand(padding, plotWidth, yForPrice, startPrice, sigmaBps, lowerPrice, upperPrice);
+      drawArea(points, xFor, yForPrice, baseline, false);
+      drawArea(points, xFor, yForPrice, baseline, true);
+      drawCurve(points, xFor, yForPrice);
+      drawCenterLine(padding, plotWidth, yForPrice, startPrice, lowerPrice, upperPrice);
+      drawSigmaMarkers(padding, plotWidth, yForPrice, startPrice, sigmaBps, lowerPrice, upperPrice);
+      drawPriceLines(padding, plotWidth, yForPrice, startPrice, strikePrice, lowerPrice, upperPrice);
+
+      if (startPriceDisplay) startPriceDisplay.textContent = formatNumber(startPrice);
+      if (plotSigmaDisplay) plotSigmaDisplay.textContent = `${sigmaBps.toFixed(1)} bps`;
+      if (oneSigmaBand) oneSigmaBand.textContent = `${formatNumber(priceAtBps(startPrice, -configuredSigmaBps))} - ${formatNumber(priceAtBps(startPrice, configuredSigmaBps))}`;
+      if (twoSigmaBand) twoSigmaBand.textContent = `${formatNumber(priceAtBps(startPrice, -2 * configuredSigmaBps))} - ${formatNumber(priceAtBps(startPrice, 2 * configuredSigmaBps))}`;
+      if (visibleRange) visibleRange.textContent = `${Math.round(bpsForPrice(startPrice, lowerPrice))} - +${Math.round(bpsForPrice(startPrice, upperPrice))}`;
+      drawStrikeChart(buildOrderbookDistribution(strikePrice, remainingSigmaBps));
+    }
+
+    function drawStrikeChart(orderbookDistribution = null) {
+      const { width, height } = prepareCanvas(strikeCanvas, strikeContext);
+      const padding = { top: 58, right: 24, bottom: 76, left: 70 };
+      const plotWidth = width - padding.left - padding.right;
+      const plotHeight = height - padding.top - padding.bottom;
+      const strikePrice = getStrikePrice();
+      const fairCents = calculateFairCents();
+      const selectedT = getT();
+      const strikeCents = 50;
+      const yFor = (cents) => padding.top + ((100 - cents) / 100) * plotHeight;
+      const axisX = padding.left + plotWidth / 2;
+
+      strikeContext.clearRect(0, 0, width, height);
+      strikeContext.fillStyle = '#0c121b';
+      strikeContext.fillRect(0, 0, width, height);
+
+      const tAxisY = 24;
+      const xForT = (value) => padding.left + value * plotWidth;
+      strikeContext.strokeStyle = '#344258';
+      strikeContext.fillStyle = '#8d9bb0';
+      strikeContext.lineWidth = 2;
+      strikeContext.beginPath();
+      strikeContext.moveTo(padding.left, tAxisY);
+      strikeContext.lineTo(padding.left + plotWidth, tAxisY);
+      strikeContext.stroke();
+      strikeContext.textAlign = 'center';
+      strikeContext.textBaseline = 'middle';
+      strikeContext.font = '12px Inter, system-ui, sans-serif';
+      for (let tick = 0; tick <= 4; tick += 1) {
+        const value = tick / 4;
+        const x = xForT(value);
+        strikeContext.beginPath();
+        strikeContext.moveTo(x, tAxisY - 5);
+        strikeContext.lineTo(x, tAxisY + 5);
+        strikeContext.stroke();
+        strikeContext.fillText(value.toFixed(2).replace(/\.00$/, ''), x, tAxisY - 16);
+      }
+      const tX = xForT(selectedT);
+      strikeContext.fillStyle = '#42a5ff';
+      strikeContext.beginPath();
+      strikeContext.arc(tX, tAxisY, 6, 0, Math.PI * 2);
+      strikeContext.fill();
+      strikeContext.textAlign = 'right';
+      strikeContext.fillText(`T ${selectedT.toFixed(2)}`, padding.left - 10, tAxisY);
+      chartState.strikeGeometry = {
+        tAxisY,
+        tLeft: padding.left,
+        tRight: padding.left + plotWidth,
+        tTop: tAxisY - 24,
+        tBottom: tAxisY + 32
+      };
+
+      strikeContext.strokeStyle = '#1d2838';
+      strikeContext.lineWidth = 1;
+      strikeContext.fillStyle = '#8d9bb0';
+      strikeContext.font = '12px Inter, system-ui, sans-serif';
+      strikeContext.textAlign = 'right';
+      strikeContext.textBaseline = 'middle';
+
+      for (let cents = 0; cents <= 100; cents += 10) {
+        const y = yFor(cents);
+        strikeContext.beginPath();
+        strikeContext.moveTo(padding.left, y);
+        strikeContext.lineTo(padding.left + plotWidth, y);
+        strikeContext.stroke();
+        const label = cents === 50 ? '50c' : cents.toString();
+        strikeContext.fillText(label, padding.left - 10, y);
+      }
+
+      strikeContext.strokeStyle = '#344258';
+      strikeContext.lineWidth = 2;
+      strikeContext.beginPath();
+      strikeContext.moveTo(axisX, padding.top);
+      strikeContext.lineTo(axisX, padding.top + plotHeight);
+      strikeContext.stroke();
+
+      const strikeY = yFor(strikeCents);
+      strikeContext.strokeStyle = '#ffcc66';
+      strikeContext.fillStyle = '#ffcc66';
+      strikeContext.lineWidth = 3;
+      strikeContext.beginPath();
+      strikeContext.moveTo(padding.left, strikeY);
+      strikeContext.lineTo(padding.left + plotWidth, strikeY);
+      strikeContext.stroke();
+      strikeContext.textAlign = 'left';
+      strikeContext.fillText(`${formatNumber(strikePrice)} @ 50c`, axisX + 10, strikeY - 12);
+
+      const fairY = yFor(fairCents);
+      strikeContext.strokeStyle = '#35c98f';
+      strikeContext.fillStyle = '#35c98f';
+      strikeContext.lineWidth = 2;
+      strikeContext.beginPath();
+      strikeContext.moveTo(padding.left, fairY);
+      strikeContext.lineTo(padding.left + plotWidth, fairY);
+      strikeContext.stroke();
+      strikeContext.textAlign = 'left';
+      strikeContext.fillText(`fair ${fairCents.toFixed(2)}c`, axisX + 10, fairY + 12);
+
+      const densityAxisY = height - 48;
+      strikeContext.strokeStyle = '#344258';
+      strikeContext.fillStyle = '#8d9bb0';
+      strikeContext.lineWidth = 2;
+      strikeContext.beginPath();
+      strikeContext.moveTo(padding.left, densityAxisY);
+      strikeContext.lineTo(padding.left + plotWidth, densityAxisY);
+      strikeContext.stroke();
+      strikeContext.textAlign = 'center';
+      strikeContext.font = '12px Inter, system-ui, sans-serif';
+      const densityMax = orderbookDistribution?.maxWeight || 1;
+      for (let tick = 0; tick <= 4; tick += 1) {
+        const value = (densityMax / 4) * tick;
+        const x = padding.left + (tick / 4) * plotWidth;
+        strikeContext.beginPath();
+        strikeContext.moveTo(x, densityAxisY - 5);
+        strikeContext.lineTo(x, densityAxisY + 5);
+        strikeContext.stroke();
+        strikeContext.fillText(`${(value * 100).toFixed(2)}%`, x, densityAxisY + 18);
+      }
+      if (orderbookDistribution) {
+        drawOrderbookDistribution(orderbookDistribution, padding.left, padding, plotWidth, yFor);
+      }
+      strikeContext.fillStyle = '#c9d6e7';
+      strikeContext.fillText('density, % per cent', padding.left + plotWidth / 2, height - 12);
+
+      strikeContext.save();
+      strikeContext.fillStyle = '#c9d6e7';
+      strikeContext.textAlign = 'center';
+      strikeContext.translate(20, padding.top + plotHeight / 2);
+      strikeContext.rotate(-Math.PI / 2);
+      strikeContext.fillText('orderbook, cents', 0, 0);
+      strikeContext.restore();
+      if (strikePriceDisplay) strikePriceDisplay.textContent = `${formatNumber(strikePrice)} @ 50c`;
+      if (fairPriceDisplay) fairPriceDisplay.textContent = `${fairCents.toFixed(2)} cents`;
+      if (orderbookAreaDisplay) orderbookAreaDisplay.textContent = orderbookDistribution ? orderbookDistribution.area.toFixed(3) : '1.000';
+      tValue.textContent = selectedT.toFixed(2);
+    }
+
+    function drawOrderbookDistribution(distribution, anchorX, padding, plotWidth, yFor) {
+      if (!distribution.maxWeight) return;
+
+      const rightX = padding.left + plotWidth;
+      const maxWidth = Math.max(0, rightX - anchorX);
+      const xForWeight = (weight) => anchorX + (weight / distribution.maxWeight) * maxWidth;
+      const lastIndex = distribution.weights.length - 1;
+      const centsForIndex = (index) => index * distribution.centsStep;
+
+      strikeContext.save();
+      strikeContext.beginPath();
+      strikeContext.moveTo(anchorX, yFor(0));
+      strikeContext.lineTo(xForWeight(distribution.weights[0]), yFor(0));
+      for (let index = 0; index <= lastIndex; index += 1) {
+        strikeContext.lineTo(xForWeight(distribution.weights[index]), yFor(centsForIndex(index)));
+      }
+      strikeContext.lineTo(anchorX, yFor(100));
+      strikeContext.closePath();
+      strikeContext.fillStyle = 'rgba(66, 165, 255, 0.18)';
+      strikeContext.fill();
+
+      strikeContext.beginPath();
+      for (let index = 0; index <= lastIndex; index += 1) {
+        const x = xForWeight(distribution.weights[index]);
+        const y = yFor(centsForIndex(index));
+        if (index === 0) strikeContext.moveTo(x, y);
+        else strikeContext.lineTo(x, y);
+      }
+      strikeContext.strokeStyle = '#42a5ff';
+      strikeContext.lineWidth = 2;
+      strikeContext.lineJoin = 'round';
+      strikeContext.lineCap = 'round';
+      strikeContext.stroke();
+      strikeContext.restore();
+    }
+
+    function getStrikeCanvasPoint(event) {
+      const rect = strikeCanvas.getBoundingClientRect();
+      return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+    }
+
+    function updateTFromStrikePoint(point) {
+      const geometry = chartState.strikeGeometry;
+      if (!geometry) return;
+
+      const rawValue = (point.x - geometry.tLeft) / (geometry.tRight - geometry.tLeft);
+      const clampedValue = Math.min(1, Math.max(0, rawValue));
+      tSlider.value = (Math.round(clampedValue * 100) / 100).toFixed(2);
+      requestDrawDistribution();
+    }
+
+    function handleStrikePointerDown(event) {
+      const geometry = chartState.strikeGeometry;
+      if (!geometry) return;
+
+      const point = getStrikeCanvasPoint(event);
+      const onTAxis = point.x >= geometry.tLeft && point.x <= geometry.tRight &&
+        point.y >= geometry.tTop && point.y <= geometry.tBottom;
+
+      if (!onTAxis) return;
+
+      chartState.tDragging = true;
+      strikeCanvas.setPointerCapture(event.pointerId);
+      updateTFromStrikePoint(point);
+      event.preventDefault();
+    }
+
+    function handleStrikePointerMove(event) {
+      if (!chartState.tDragging) return;
+      updateTFromStrikePoint(getStrikeCanvasPoint(event));
+    }
+
+    function handleStrikePointerUp(event) {
+      if (!chartState.tDragging) return;
+      chartState.tDragging = false;
+      if (strikeCanvas.hasPointerCapture(event.pointerId)) strikeCanvas.releasePointerCapture(event.pointerId);
+    }
+
+    function drawGrid(width, height, padding, plotWidth, plotHeight, xFor, yForPrice, xMax, startPrice, lowerPrice, upperPrice) {
+      context.save();
+      context.strokeStyle = '#1d2838';
+      context.lineWidth = 1;
+      context.fillStyle = '#8d9bb0';
+      context.font = '12px Inter, system-ui, sans-serif';
+      context.textBaseline = 'middle';
+
+      const bpsTick = pickBpsTick(chartState.visibleBps);
+      const lowerBps = bpsForPrice(startPrice, lowerPrice);
+      const upperBps = bpsForPrice(startPrice, upperPrice);
+      const firstTick = Math.ceil(lowerBps / bpsTick) * bpsTick;
+
+      for (let bps = firstTick; bps <= upperBps; bps += bpsTick) {
+        const price = priceAtBps(startPrice, bps);
+        const y = yForPrice(price);
+        context.beginPath();
+        context.moveTo(padding.left, y);
+        context.lineTo(padding.left + plotWidth, y);
+        context.stroke();
+
+        context.textAlign = 'right';
+        context.fillText(formatBps(bps), padding.left - 12, y);
+
+        context.textAlign = 'left';
+        context.fillText(formatNumber(price), padding.left + plotWidth + 10, y);
+      }
+
+      for (let tick = 0; tick <= 4; tick += 1) {
+        const density = (xMax / 4) * tick;
+        const x = xFor(density);
+        context.beginPath();
+        context.moveTo(x, padding.top);
+        context.lineTo(x, padding.top + plotHeight);
+        context.stroke();
+
+        context.textAlign = 'center';
+        context.fillText(`${(density * 100).toFixed(2)}%`, x, height - 36);
+      }
+
+      context.strokeStyle = '#344258';
+      context.beginPath();
+      context.moveTo(padding.left, padding.top);
+      context.lineTo(padding.left, padding.top + plotHeight);
+      context.lineTo(padding.left + plotWidth, padding.top + plotHeight);
+      context.stroke();
+
+      context.textAlign = 'center';
+      context.fillStyle = '#c9d6e7';
+      context.fillText('density, % per bps', padding.left + plotWidth / 2, height - 12);
+
+      context.translate(20, padding.top + plotHeight / 2);
+      context.rotate(-Math.PI / 2);
+      context.fillText('bps from current price', 0, 0);
+      context.restore();
+    }
+
+    function drawSigmaBand(padding, plotWidth, yForPrice, startPrice, sigmaBps, lowerPrice, upperPrice) {
+      const topPrice = Math.min(upperPrice, priceAtBps(startPrice, sigmaBps));
+      const bottomPrice = Math.max(lowerPrice, priceAtBps(startPrice, -sigmaBps));
+      if (topPrice <= lowerPrice || bottomPrice >= upperPrice) return;
+      const top = yForPrice(topPrice);
+      const bottom = yForPrice(bottomPrice);
+      context.save();
+      context.fillStyle = 'rgba(66, 165, 255, 0.13)';
+      context.fillRect(padding.left, top, plotWidth, bottom - top);
+      context.restore();
+    }
+
+    function drawArea(points, xFor, yForPrice, baseline, upperSide) {
+      const filteredPoints = points.filter((point) => upperSide ? point.bps >= 0 : point.bps <= 0);
+      if (!filteredPoints.length) return;
+      context.save();
+      context.beginPath();
+      context.moveTo(baseline, yForPrice(filteredPoints[0].price));
+      filteredPoints.forEach((point) => context.lineTo(xFor(point.density), yForPrice(point.price)));
+      context.lineTo(baseline, yForPrice(filteredPoints[filteredPoints.length - 1].price));
+      context.closePath();
+      context.fillStyle = upperSide ? 'rgba(255, 107, 115, 0.18)' : 'rgba(53, 201, 143, 0.18)';
+      context.fill();
+      context.restore();
+    }
+
+    function drawCurve(points, xFor, yForPrice) {
+      context.save();
+      context.beginPath();
+      points.forEach((point, index) => {
+        const x = xFor(point.density);
+        const y = yForPrice(point.price);
+        if (index === 0) context.moveTo(x, y);
+        else context.lineTo(x, y);
+      });
+      context.strokeStyle = '#42a5ff';
+      context.lineWidth = 3;
+      context.lineJoin = 'round';
+      context.stroke();
+      context.restore();
+    }
+
+    function drawCenterLine(padding, plotWidth, yForPrice, startPrice, lowerPrice, upperPrice) {
+      if (startPrice < lowerPrice || startPrice > upperPrice) return;
+      const y = yForPrice(startPrice);
+      context.save();
+      context.strokeStyle = '#edf3ff';
+      context.setLineDash([5, 5]);
+      context.beginPath();
+      context.moveTo(padding.left, y);
+      context.lineTo(padding.left + plotWidth, y);
+      context.stroke();
+      context.setLineDash([]);
+      context.restore();
+    }
+
+    function drawSigmaMarkers(padding, plotWidth, yForPrice, startPrice, sigmaBps, lowerPrice, upperPrice) {
+      context.save();
+      context.strokeStyle = '#42a5ff';
+      context.fillStyle = '#42a5ff';
+      context.font = '12px Inter, system-ui, sans-serif';
+      context.textAlign = 'right';
+      chartState.sigmaZones = [];
+
+      [-sigmaBps, sigmaBps].forEach((bps) => {
+        const price = priceAtBps(startPrice, bps);
+        if (price < lowerPrice || price > upperPrice) return;
+        const y = yForPrice(price);
+        context.beginPath();
+        context.moveTo(padding.left, y);
+        context.lineTo(padding.left + plotWidth, y);
+        context.stroke();
+        context.beginPath();
+        context.arc(padding.left + plotWidth - 8, y, 5, 0, Math.PI * 2);
+        context.fill();
+        context.fillText(`${formatBps(bps)} bps`, padding.left + plotWidth - 8, y - 10);
+        chartState.sigmaZones.push({ key: bps < 0 ? 'sigma-low' : 'sigma-high', y, top: y - 9, bottom: y + 9 });
+      });
+
+      context.restore();
+    }
+
+    function drawPriceLines(padding, plotWidth, yForPrice, startPrice, strikePrice, lowerPrice, upperPrice) {
+      const lines = [
+        { key: 'start', label: `Current ${formatNumber(startPrice)}`, price: startPrice, color: '#edf3ff' },
+        { key: 'strike', label: `Strike ${formatNumber(strikePrice)}`, price: strikePrice, color: '#ffcc66' }
+      ];
+
+      chartState.lineZones = [];
+      context.save();
+      context.font = '12px Inter, system-ui, sans-serif';
+      context.textAlign = 'left';
+      context.textBaseline = 'middle';
+
+      lines.forEach((line) => {
+        if (line.price < lowerPrice || line.price > upperPrice) return;
+        const y = yForPrice(line.price);
+        const labelX = line.key === 'strike' ? padding.left + Math.max(24, Math.min(112, plotWidth - 150)) : padding.left + 8;
+        context.strokeStyle = line.color;
+        context.fillStyle = line.color;
+        context.lineWidth = 2;
+        context.beginPath();
+        context.moveTo(padding.left, y);
+        context.lineTo(padding.left + plotWidth, y);
+        context.stroke();
+        context.beginPath();
+        context.arc(padding.left + plotWidth - 8, y, 5, 0, Math.PI * 2);
+        context.fill();
+        context.fillText(line.label, labelX, y - 12);
+        chartState.lineZones.push({ key: line.key, y, top: y - 8, bottom: y + 8 });
+      });
+
+      context.restore();
+    }
+
+    function pickBpsTick(visibleBps) {
+      const target = visibleBps / 4;
+      const ticks = [10, 25, 50, 100, 250, 500, 1000, 2500];
+      return ticks.find((tick) => tick >= target) || 5000;
+    }
+
+    function handleAxisWheel(event) {
+      const zones = chartState.axisZones;
+      if (!zones) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      const onVerticalAxis = y >= zones.top && y <= zones.bottom &&
+        ((x >= zones.bpsLeft && x <= zones.bpsRight) || (x >= zones.priceLeft && x <= zones.priceRight));
+
+      if (!onVerticalAxis) return;
+
+      event.preventDefault();
+      const zoomFactor = event.deltaY < 0 ? 0.9 : 1.1;
+      const nextVisibleBps = Math.round(chartState.visibleBps * zoomFactor);
+      chartState.visibleBps = Math.min(maxVisibleBps, Math.max(minVisibleBps, nextVisibleBps));
+      requestDrawDistribution();
+    }
+
+    function getCanvasPoint(event) {
+      const rect = canvas.getBoundingClientRect();
+      return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+    }
+
+    function bpsFromCanvasY(y) {
+      const geometry = chartState.lastGeometry;
+      if (!geometry) return 0;
+      const price = priceFromCanvasY(y);
+      return bpsForPrice(getStartPrice(), price);
+    }
+
+    function priceFromCanvasY(y) {
+      const geometry = chartState.lastGeometry;
+      if (!geometry) return getStartPrice();
+      const boundedY = Math.min(geometry.padding.top + geometry.plotHeight, Math.max(geometry.padding.top, y));
+      const position = (boundedY - geometry.padding.top) / geometry.plotHeight;
+      return geometry.upperPrice - position * (geometry.upperPrice - geometry.lowerPrice);
+    }
+
+    function handlePointerDown(event) {
+      const point = getCanvasPoint(event);
+      const geometry = chartState.lastGeometry;
+      if (!geometry || !chartState.lineZones) return;
+
+      const insidePlot = point.x >= geometry.padding.left && point.x <= geometry.padding.left + geometry.plotWidth;
+      const onPriceAxis = point.y >= geometry.padding.top && point.y <= geometry.padding.top + geometry.plotHeight &&
+        point.x >= geometry.padding.left + geometry.plotWidth && point.x <= geometry.width;
+      const line = chartState.lineZones.find((zone) => point.y >= zone.top && point.y <= zone.bottom);
+      const sigmaZone = chartState.sigmaZones?.find((zone) => point.y >= zone.top && point.y <= zone.bottom);
+
+      if (onPriceAxis) {
+        chartState.axisDrag = {
+          startY: point.y,
+          startCenterPrice: chartState.centerPrice
+        };
+        canvas.setPointerCapture(event.pointerId);
+        event.preventDefault();
+        return;
+      }
+
+      if (!insidePlot || (!line && !sigmaZone)) return;
+
+      chartState.dragTarget = sigmaZone ? sigmaZone.key : line.key;
+      canvas.setPointerCapture(event.pointerId);
+      event.preventDefault();
+    }
+
+    function handlePointerMove(event) {
+      if (chartState.axisDrag) {
+        const point = getCanvasPoint(event);
+        const geometry = chartState.lastGeometry;
+        const pricePerPixel = (geometry.upperPrice - geometry.lowerPrice) / geometry.plotHeight;
+        chartState.centerPrice = Math.max(1, chartState.axisDrag.startCenterPrice + (point.y - chartState.axisDrag.startY) * pricePerPixel);
+        requestDrawDistribution();
+        return;
+      }
+
+      if (!chartState.dragTarget) return;
+
+      const point = getCanvasPoint(event);
+      const price = priceFromCanvasY(point.y);
+
+      if (chartState.dragTarget === 'sigma-low' || chartState.dragTarget === 'sigma-high') {
+        const draggedBps = Math.abs(bpsFromCanvasY(point.y));
+        const tScale = Math.max(0.000001, Math.sqrt(1 - getT()));
+        syncSigma(draggedBps / tScale);
+        return;
+      }
+
+      if (chartState.dragTarget === 'start') {
+        startPriceInput.value = Math.max(0, Math.round(price)).toString();
+      } else {
+        strikePriceInput.value = Math.max(0, Math.round(price)).toString();
+      }
+
+      requestDrawDistribution();
+    }
+
+    function handlePointerUp(event) {
+      if (!chartState.dragTarget && !chartState.axisDrag) return;
+      chartState.dragTarget = null;
+      chartState.axisDrag = null;
+      if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+    }
+
+    sigmaSlider.addEventListener('input', (event) => syncSigma(event.target.value));
+    sigmaInput.addEventListener('input', (event) => {
+      if (event.target.value !== '') syncSigma(event.target.value);
+    });
+    sigmaInput.addEventListener('blur', (event) => syncSigma(event.target.value));
+    startPriceInput.addEventListener('input', requestDrawDistribution);
+    startPriceInput.addEventListener('blur', () => {
+      if (startPriceInput.value === '' || Number(startPriceInput.value) < 0) startPriceInput.value = '60000';
+      requestDrawDistribution();
+    });
+    strikePriceInput.addEventListener('input', requestDrawDistribution);
+    strikePriceInput.addEventListener('blur', () => {
+      strikePriceInput.value = getStrikePrice().toString();
+      requestDrawDistribution();
+    });
+    tSlider.addEventListener('input', requestDrawDistribution);
+    priceDistributionSelect.addEventListener('change', requestDrawDistribution);
+    canvas.addEventListener('wheel', handleAxisWheel, { passive: false });
+    canvas.addEventListener('pointerdown', handlePointerDown);
+    canvas.addEventListener('pointermove', handlePointerMove);
+    canvas.addEventListener('pointerup', handlePointerUp);
+    canvas.addEventListener('pointercancel', handlePointerUp);
+    strikeCanvas.addEventListener('pointerdown', handleStrikePointerDown);
+    strikeCanvas.addEventListener('pointermove', handleStrikePointerMove);
+    strikeCanvas.addEventListener('pointerup', handleStrikePointerUp);
+    strikeCanvas.addEventListener('pointercancel', handleStrikePointerUp);
+    window.addEventListener('resize', requestDrawDistribution);
+
+    drawDistribution();
+  </script>
+</body>
+</html>
