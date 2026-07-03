@@ -31,7 +31,7 @@
     }
 
     main {
-      width: min(1180px, calc(100vw - 32px));
+      width: min(1240px, calc(100vw - 32px));
       margin: 0 auto;
       padding: 28px 0;
     }
@@ -100,7 +100,7 @@
 
     .plots {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 42px;
       gap: 16px;
       align-items: stretch;
     }
@@ -115,7 +115,67 @@
       color: #c9d6e7;
       font-size: 13px;
       font-weight: 650;
+      min-height: 28px;
+      display: flex;
+      align-items: center;
     }
+
+    .plot-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-width: 0;
+      min-height: 28px;
+    }
+
+    .position-controls {
+      display: inline-grid;
+      grid-template-columns: 54px minmax(74px, auto) 54px;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .side-button {
+      height: 28px;
+      border: 1px solid #344258;
+      background: #0b111a;
+      color: #c9d6e7;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .side-button:hover,
+    .side-button:focus-visible {
+      border-color: var(--accent);
+      color: var(--ink);
+      outline: none;
+    }
+
+    .side-button.is-long-active {
+      border-color: rgba(53, 201, 143, 0.72);
+      background: rgba(53, 201, 143, 0.16);
+      color: #77e7ba;
+    }
+
+    .side-button.is-short-active {
+      border-color: rgba(255, 107, 115, 0.72);
+      background: rgba(255, 107, 115, 0.16);
+      color: #ff9ba1;
+    }
+
+    .edge-display {
+      text-align: center;
+      color: var(--ink);
+    }
+
+    .edge-display.is-positive { color: #77e7ba; }
+    .edge-display.is-negative { color: #ff9ba1; }
 
     .chart-wrap {
       width: 100%;
@@ -127,6 +187,115 @@
       width: 100%;
       height: 720px;
       min-height: 0;
+    }
+
+    .prediction-plot-row {
+      display: block;
+      min-width: 0;
+    }
+
+    .position-slider-column {
+      display: grid;
+      grid-template-rows: auto 720px auto;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .position-title-spacer {
+      min-height: 28px;
+    }
+
+    .position-legend-spacer {
+      min-height: 18px;
+    }
+
+    .vertical-position-control {
+      position: relative;
+      display: grid;
+      grid-template-rows: 22px minmax(0, 1fr) 22px;
+      justify-items: center;
+      align-items: center;
+      width: 42px;
+      height: 100%;
+      min-height: 0;
+      margin-top: -1px;
+      background: rgba(12, 18, 27, 0.78);
+      border: 1px solid rgba(52, 66, 88, 0.72);
+    }
+
+    .vertical-position-body {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      min-height: 0;
+    }
+
+    .vertical-position-label {
+      position: absolute;
+      right: -8px;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      color: #c9d6e7;
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: 0;
+      text-transform: lowercase;
+    }
+
+    .vertical-position-number {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+
+    input[type="range"].vertical-position-slider {
+      width: 18px;
+      height: calc(100% - 16px);
+      writing-mode: vertical-lr;
+      direction: rtl;
+      transform: none;
+      align-self: center;
+      justify-self: center;
+      accent-color: var(--accent);
+      position: relative;
+      z-index: 1;
+    }
+
+    input[type="range"].vertical-position-slider::-webkit-slider-runnable-track {
+      width: 6px;
+      height: 100%;
+      background: #263244;
+      border: 1px solid #344258;
+      border-radius: 0;
+    }
+
+    input[type="range"].vertical-position-slider::-webkit-slider-thumb {
+      width: 14px;
+      height: 14px;
+      margin-left: -5px;
+      background: var(--accent);
+      border: 1px solid #8fd0ff;
+      border-radius: 0;
+    }
+
+    input[type="range"].vertical-position-slider::-moz-range-track {
+      width: 6px;
+      height: 100%;
+      background: #263244;
+      border: 1px solid #344258;
+      border-radius: 0;
+    }
+
+    input[type="range"].vertical-position-slider::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      background: var(--accent);
+      border: 1px solid #8fd0ff;
+      border-radius: 0;
     }
 
     canvas {
@@ -168,8 +337,11 @@
 
     .swatch.low { background: var(--low); }
     .swatch.high { background: var(--high); }
+    .swatch.vwap { background: #b887ff; }
     .swatch.strike { background: #ffcc66; }
     .swatch.fair { background: var(--low); }
+    .swatch.bid { background: #35c98f; }
+    .swatch.ask { background: #ff6b73; }
     .swatch.t { width: 10px; height: 10px; border-radius: 0; background: var(--accent); }
 
     .controls {
@@ -343,13 +515,15 @@
       }
 
       .shell { grid-template-columns: 1fr; }
-      .plots { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+      .plots { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 42px; }
       .controls { grid-template-columns: 1fr; }
       .info-grid { grid-template-columns: 1fr; }
       .chart-panel, .controls { padding: 16px; }
       .chart-header { display: grid; }
+      .plot-title-row { align-items: start; flex-direction: column; }
       .chart-wrap { height: 560px; }
       .strike-wrap { height: 560px; }
+      .position-slider-column { grid-template-rows: auto 560px auto; }
     }
   </style>
 </head>
@@ -379,16 +553,41 @@
           </div>
 
           <div class="plot-block">
-            <div class="plot-title">Prediction Distribution</div>
-            <div class="strike-wrap">
-              <canvas id="strikeChart" width="360" height="430" aria-label="Vertical strike price chart from 0 to 100 cents"></canvas>
+            <div class="plot-title-row">
+              <div class="plot-title">Prediction Distribution</div>
+              <div class="position-controls" aria-label="Position side and expected edge">
+                <button id="longButton" class="side-button is-long-active" type="button" aria-pressed="true">Long</button>
+                <span id="edgeDisplay" class="edge-display">0.00%</span>
+                <button id="shortButton" class="side-button" type="button" aria-pressed="false">Short</button>
+              </div>
+            </div>
+            <div class="prediction-plot-row">
+              <div class="strike-wrap">
+                <canvas id="strikeChart" width="360" height="430" aria-label="Vertical strike price chart from 0 to 100 cents"></canvas>
+              </div>
             </div>
             <div class="legend" aria-label="Prediction distribution legend">
               <span class="legend-item"><span class="swatch"></span>Prediction density</span>
+              <span class="legend-item"><span class="swatch vwap"></span>VWAP</span>
               <span class="legend-item"><span class="swatch strike"></span>Strike 50c</span>
               <span class="legend-item"><span class="swatch fair"></span>Fair price</span>
+              <span class="legend-item"><span class="swatch bid"></span>Bid</span>
+              <span class="legend-item"><span class="swatch ask"></span>Ask</span>
               <span class="legend-item"><span class="swatch t"></span>T handle</span>
             </div>
+          </div>
+
+          <div class="position-slider-column">
+            <div class="position-title-spacer"></div>
+            <div class="vertical-position-control" aria-label="Position control">
+              <span class="vertical-position-number">1</span>
+              <div class="vertical-position-body">
+                <label class="vertical-position-label" for="positionSlider">position</label>
+                <input id="positionSlider" class="vertical-position-slider" type="range" min="-1" max="1" step="0.01" value="0" aria-label="Position">
+              </div>
+              <span class="vertical-position-number">-1</span>
+            </div>
+            <div class="position-legend-spacer"></div>
           </div>
         </div>
       </div>
@@ -432,9 +631,9 @@
             <label for="tSlider">T</label>
             <input id="tSlider" type="range" min="0" max="1" step="0.01" value="0.5">
             <div class="range-labels">
-              <span>0</span>
-              <span id="tValue">0.50</span>
               <span>1</span>
+              <span id="tValue">0.50</span>
+              <span>0</span>
             </div>
           </div>
 
@@ -461,6 +660,8 @@
               <li>Drag either +1 sigma or -1 sigma point on the Price Distribution chart to change Sigma. Both points control the same sigma value.</li>
               <li>Use the Sigma slider or number input for exact sigma values from 1 to 1000 bps.</li>
               <li>Use the T slider below, or drag the T point on the top axis of the Prediction Distribution chart.</li>
+              <li>Use Long or Short above the Prediction Distribution chart to choose the active side.</li>
+              <li>Drag the VWAP line on the Prediction Distribution chart to update the displayed edge.</li>
               <li>Use the mouse wheel over the left bps axis or right price axis of the Price Distribution chart to zoom the visible price range.</li>
               <li>Drag the right price axis on the Price Distribution chart to pan the visible price range up or down.</li>
             </ul>
@@ -469,11 +670,13 @@
             <h3>Formulas and Mapping</h3>
             <ol>
               <li>Prices are modeled in log-bps space: <code>price = current * exp(bps / 10000)</code>.</li>
-              <li>The plotted remaining volatility is <code>sigma_plot = sigma * sqrt(1 - T)</code>.</li>
-              <li>The Price Distribution chart draws the selected density family over bps using <code>sigma_plot</code>: Gaussian, Student-t, Laplacian, or Logistic. Non-Gaussian families are standardized so sigma remains the bps standard deviation.</li>
-              <li>The fair binary prediction price is <code>100 * (1 - F(strike_bps / sigma_plot))</code>, where <code>F</code> is the selected distribution CDF.</li>
-              <li>The Prediction Distribution uses an analytic change of variables from underlying bps to binary fair price, so it does not depend on the visible chart scale.</li>
-              <li>The resulting density is evaluated over 0c to 100c and normalized so the total area under the curve is 1.</li>
+              <li><code>T</code> is time remaining to resolution, so <code>sigma_T = sigma * sqrt(T)</code>.</li>
+              <li>The Price Distribution chart draws the selected density family over bps using <code>sigma_T</code>: Gaussian, Student-t, Laplacian, or Logistic. Non-Gaussian families are standardized so sigma remains the bps standard deviation.</li>
+              <li>The current binary fair price is <code>100 * (1 - F(strike_bps / sigma_T))</code>, where <code>F</code> is the selected distribution CDF.</li>
+              <li>The Prediction Distribution samples possible future underlying prices over <code>T</code>, then maps each sampled price to a binary fair price using the same <code>sigma_T</code>.</li>
+              <li>The resulting prediction distribution is plotted as probability mass per bin and normalized so the cumulative sum is 1.</li>
+              <li>The green fair line on the Prediction Distribution chart is the mean of that plotted prediction distribution.</li>
+              <li>The header percentage is expected edge over VWAP: Long uses <code>mean / VWAP - 1</code>, Short uses <code>(100 - mean) / (100 - VWAP) - 1</code>.</li>
             </ol>
           </div>
         </div>
@@ -493,6 +696,10 @@
     const tSlider = document.getElementById('tSlider');
     const tValue = document.getElementById('tValue');
     const priceDistributionSelect = document.getElementById('priceDistributionSelect');
+    const longButton = document.getElementById('longButton');
+    const shortButton = document.getElementById('shortButton');
+    const edgeDisplay = document.getElementById('edgeDisplay');
+    const positionSlider = document.getElementById('positionSlider');
     const startPriceDisplay = document.getElementById('startPriceDisplay');
     const strikePriceDisplay = document.getElementById('strikePriceDisplay');
     const fairPriceDisplay = document.getElementById('fairPriceDisplay');
@@ -508,6 +715,12 @@
     const maxVisibleBps = 10000;
     const bpsSteps = 801;
     const orderbookBins = 501;
+    const quoteBaseSpreadProbability = 0.15;
+    const quoteSkewProbability = 0.25;
+    const quoteInventorySpreadProbability = 0.1;
+    const quoteMinProbability = 0.01;
+    const quoteMaxProbability = 0.99;
+    const quoteMinEdgeCents = 0.1;
     let drawFrameId = 0;
     const chartState = {
       visibleBps: 1000,
@@ -519,7 +732,10 @@
       axisDrag: null,
       lastGeometry: null,
       strikeGeometry: null,
-      tDragging: false
+      tDragging: false,
+      vwapDragging: false,
+      vwapCents: 50,
+      side: 'long'
     };
 
     function clampSigma(value) {
@@ -540,11 +756,24 @@
 
     function getT() {
       const value = Number(tSlider.value);
-      return Number.isFinite(value) ? Math.min(1, Math.max(0, value)) : 0.5;
+      return Number.isFinite(value) ? 1 - Math.min(1, Math.max(0, value)) : 0.5;
+    }
+
+    function getPosition() {
+      const value = Number(positionSlider.value);
+      return Number.isFinite(value) ? Math.min(1, Math.max(-1, value)) : 0;
     }
 
     function getRemainingSigmaBps() {
+      return Number(sigmaSlider.value) * Math.sqrt(getT());
+    }
+
+    function getElapsedSigmaBps() {
       return Number(sigmaSlider.value) * Math.sqrt(1 - getT());
+    }
+
+    function getTotalSigmaBps() {
+      return Number(sigmaSlider.value);
     }
 
     function densityAt(bps, sigmaBps, model = getDistributionModel()) {
@@ -680,10 +909,65 @@
     function calculateFairCents() {
       const currentPrice = getStartPrice();
       const strikePrice = getStrikePrice();
-      const sigmaBps = Math.max(0.000001, getRemainingSigmaBps());
+      const sigmaBps = getRemainingSigmaBps();
+      if (sigmaBps <= 0.000001) return currentPrice > strikePrice ? 100 : 0;
       const strikeBps = bpsForPrice(currentPrice, strikePrice);
       const model = getDistributionModel();
       return (1 - model.cdf(strikeBps / sigmaBps)) * 100;
+    }
+
+    function calculatePredictionMeanCents(distribution) {
+      if (!distribution) return calculateFairCents();
+      if (Number.isFinite(distribution.meanCents)) return distribution.meanCents;
+
+      let weightedTotal = 0;
+      let area = 0;
+      for (let index = 0; index < distribution.weights.length; index += 1) {
+        const cents = index * distribution.centsStep;
+        const weight = distribution.weights[index];
+        weightedTotal += cents * weight;
+        area += weight;
+      }
+
+      return area > 0 ? weightedTotal / area : calculateFairCents();
+    }
+
+    function calculateEdgePercent(distribution) {
+      const meanCents = calculatePredictionMeanCents(distribution);
+      const vwapCents = chartState.vwapCents;
+      if (chartState.side === 'long') return (meanCents / Math.max(0.01, vwapCents) - 1) * 100;
+      return ((100 - meanCents) / Math.max(0.01, 100 - vwapCents) - 1) * 100;
+    }
+
+    function quantileFromDistribution(distribution, probability) {
+      if (!distribution) return calculateFairCents();
+
+      const target = Math.min(quoteMaxProbability, Math.max(quoteMinProbability, probability));
+      let cumulative = 0;
+      for (let index = 0; index < distribution.weights.length; index += 1) {
+        cumulative += distribution.weights[index];
+        if (cumulative >= target) return index * distribution.centsStep;
+      }
+
+      return 100;
+    }
+
+    function calculateQuoteCents(distribution) {
+      const position = getPosition();
+      const fairCents = calculatePredictionMeanCents(distribution);
+      const centerProbability = Math.min(quoteMaxProbability, Math.max(quoteMinProbability, 0.5 - position * quoteSkewProbability));
+      const halfSpreadProbability = quoteBaseSpreadProbability + Math.abs(position) * quoteInventorySpreadProbability;
+      const bidProbability = Math.min(quoteMaxProbability, Math.max(quoteMinProbability, centerProbability - halfSpreadProbability));
+      const askProbability = Math.min(quoteMaxProbability, Math.max(quoteMinProbability, centerProbability + halfSpreadProbability));
+      const rawBid = quantileFromDistribution(distribution, bidProbability);
+      const rawAsk = quantileFromDistribution(distribution, askProbability);
+
+      return {
+        bid: Math.max(0, Math.min(rawBid, fairCents - quoteMinEdgeCents)),
+        ask: Math.min(100, Math.max(rawAsk, fairCents + quoteMinEdgeCents)),
+        bidProbability,
+        askProbability
+      };
     }
 
     function binaryPriceCents(samplePrice, strikePrice, remainingSigmaBps) {
@@ -693,26 +977,64 @@
       return (1 - model.cdf(strikeDistanceBps / remainingSigmaBps)) * 100;
     }
 
-    function buildOrderbookDistribution(strikePrice, remainingSigmaBps) {
+    function buildPointMassDistribution(cents, massDensity = 1) {
+      const centsStep = 100 / (orderbookBins - 1);
+      const weights = new Float64Array(orderbookBins);
+      const index = Math.min(orderbookBins - 1, Math.max(0, Math.round(cents / centsStep)));
+      weights[index] = massDensity;
+
+      return {
+        weights,
+        centsStep,
+        maxWeight: weights[index],
+        area: 1,
+        meanCents: cents,
+        zeroMassDensity: weights[0],
+        hundredMassDensity: weights[weights.length - 1]
+      };
+    }
+
+    function buildResolvedDistribution(strikeBps, elapsedSigmaBps) {
+      const model = getDistributionModel();
+      const probabilityAboveStrike = 1 - model.cdf(strikeBps / Math.max(0.000001, elapsedSigmaBps));
+      const centsStep = 100 / (orderbookBins - 1);
+      const weights = new Float64Array(orderbookBins);
+      weights[0] = 1 - probabilityAboveStrike;
+      weights[weights.length - 1] = probabilityAboveStrike;
+
+      return {
+        weights,
+        centsStep,
+        maxWeight: Math.max(weights[0], weights[weights.length - 1]),
+        area: 1,
+        meanCents: probabilityAboveStrike * 100,
+        zeroMassDensity: weights[0],
+        hundredMassDensity: weights[weights.length - 1]
+      };
+    }
+
+    function buildOrderbookDistribution(strikePrice, predictionSigmaBps) {
       const centsStep = 100 / (orderbookBins - 1);
       const weights = new Float64Array(orderbookBins);
       const currentPrice = getStartPrice();
-      const sigmaBps = Math.max(0.000001, remainingSigmaBps);
+      const predictionSigma = Math.max(0.000001, predictionSigmaBps);
       const strikeBps = bpsForPrice(currentPrice, strikePrice);
       const model = getDistributionModel();
+
+      if (predictionSigmaBps <= 0.000001) return buildPointMassDistribution(calculateFairCents(), 1);
 
       for (let index = 0; index < weights.length; index += 1) {
         const cents = index * centsStep;
         const probability = Math.min(1 - 1e-6, Math.max(1e-6, cents / 100));
         const quantile = model.inverseCdf(1 - probability);
-        const underlyingBps = strikeBps - sigmaBps * quantile;
-        const underlyingDensity = densityAt(underlyingBps, sigmaBps, model);
-        const slopeCentsPerBps = (100 / sigmaBps) * model.pdf(quantile);
-        weights[index] = underlyingDensity / Math.max(1e-12, slopeCentsPerBps);
+        const underlyingBps = strikeBps - predictionSigma * quantile;
+        const underlyingDensity = densityAt(underlyingBps, predictionSigma, model);
+        const slopeCentsPerBps = (100 / predictionSigma) * model.pdf(quantile);
+        weights[index] = (underlyingDensity / Math.max(1e-12, slopeCentsPerBps)) * centsStep;
       }
 
       let rawArea = 0;
-      for (let index = 0; index < weights.length; index += 1) rawArea += weights[index] * centsStep;
+      for (let index = 0; index < weights.length; index += 1) rawArea += weights[index];
       rawArea ||= 1;
 
       let maxWeight = 0;
@@ -720,7 +1042,7 @@
       for (let index = 0; index < weights.length; index += 1) {
         weights[index] /= rawArea;
         maxWeight = Math.max(maxWeight, weights[index]);
-        area += weights[index] * centsStep;
+        area += weights[index];
       }
 
       return {
@@ -728,6 +1050,7 @@
         centsStep,
         maxWeight,
         area,
+        meanCents: null,
         zeroMassDensity: weights[0],
         hundredMassDensity: weights[weights.length - 1]
       };
@@ -748,6 +1071,18 @@
     function formatBps(value) {
       const rounded = Number(value.toFixed(2));
       return `${rounded > 0 ? '+' : ''}${rounded.toFixed(2)}`;
+    }
+
+    function formatPercent(value) {
+      const rounded = Number(value.toFixed(2));
+      return `${rounded.toFixed(2)}%`;
+    }
+
+    function updateSideButtons() {
+      longButton.classList.toggle('is-long-active', chartState.side === 'long');
+      shortButton.classList.toggle('is-short-active', chartState.side === 'short');
+      longButton.setAttribute('aria-pressed', chartState.side === 'long' ? 'true' : 'false');
+      shortButton.setAttribute('aria-pressed', chartState.side === 'short' ? 'true' : 'false');
     }
 
     function syncSigma(value) {
@@ -835,7 +1170,7 @@
       const plotWidth = width - padding.left - padding.right;
       const plotHeight = height - padding.top - padding.bottom;
       const strikePrice = getStrikePrice();
-      const fairCents = calculateFairCents();
+      const fairCents = calculatePredictionMeanCents(orderbookDistribution);
       const selectedT = getT();
       const strikeCents = 50;
       const yFor = (cents) => padding.top + ((100 - cents) / 100) * plotHeight;
@@ -846,7 +1181,7 @@
       strikeContext.fillRect(0, 0, width, height);
 
       const tAxisY = 24;
-      const xForT = (value) => padding.left + value * plotWidth;
+      const xForT = (value) => padding.left + (1 - value) * plotWidth;
       strikeContext.strokeStyle = '#344258';
       strikeContext.fillStyle = '#8d9bb0';
       strikeContext.lineWidth = 2;
@@ -858,7 +1193,7 @@
       strikeContext.textBaseline = 'middle';
       strikeContext.font = '12px Inter, system-ui, sans-serif';
       for (let tick = 0; tick <= 4; tick += 1) {
-        const value = tick / 4;
+        const value = 1 - tick / 4;
         const x = xForT(value);
         strikeContext.beginPath();
         strikeContext.moveTo(x, tAxisY - 5);
@@ -878,7 +1213,15 @@
         tLeft: padding.left,
         tRight: padding.left + plotWidth,
         tTop: tAxisY - 24,
-        tBottom: tAxisY + 32
+        tBottom: tAxisY + 32,
+        vwapTop: 0,
+        vwapBottom: 0,
+        vwapHandleX: 0,
+        vwapHandleY: 0,
+        vwapHandleRadius: 12,
+        centsTop: padding.top,
+        centsBottom: padding.top + plotHeight,
+        yFor
       };
 
       strikeContext.strokeStyle = '#1d2838';
@@ -914,7 +1257,7 @@
       strikeContext.lineTo(padding.left + plotWidth, strikeY);
       strikeContext.stroke();
       strikeContext.textAlign = 'left';
-      strikeContext.fillText(`${formatNumber(strikePrice)} @ 50c`, axisX + 10, strikeY - 12);
+      strikeContext.fillText(`${formatNumber(strikePrice)} @ 50c`, padding.left + 8, strikeY - 12);
 
       const fairY = yFor(fairCents);
       strikeContext.strokeStyle = '#35c98f';
@@ -924,8 +1267,31 @@
       strikeContext.moveTo(padding.left, fairY);
       strikeContext.lineTo(padding.left + plotWidth, fairY);
       strikeContext.stroke();
-      strikeContext.textAlign = 'left';
-      strikeContext.fillText(`fair ${fairCents.toFixed(2)}c`, axisX + 10, fairY + 12);
+      strikeContext.textAlign = 'right';
+      strikeContext.fillText(`fair ${fairCents.toFixed(2)}c`, padding.left + plotWidth - 8, fairY + 12);
+
+      const quotes = calculateQuoteCents(orderbookDistribution);
+      drawQuoteLine('bid', quotes.bid, quotes.bidProbability, '#35c98f', padding, plotWidth, yFor);
+      drawQuoteLine('ask', quotes.ask, quotes.askProbability, '#ff6b73', padding, plotWidth, yFor);
+
+      const vwapY = yFor(chartState.vwapCents);
+      strikeContext.strokeStyle = '#b887ff';
+      strikeContext.fillStyle = '#b887ff';
+      strikeContext.lineWidth = 2;
+      strikeContext.beginPath();
+      strikeContext.moveTo(padding.left, vwapY);
+      strikeContext.lineTo(padding.left + plotWidth, vwapY);
+      strikeContext.stroke();
+      strikeContext.beginPath();
+      const vwapHandleX = padding.left + plotWidth - 8;
+      strikeContext.arc(vwapHandleX, vwapY, 5, 0, Math.PI * 2);
+      strikeContext.fill();
+      strikeContext.textAlign = 'center';
+      strikeContext.fillText(`VWAP ${chartState.vwapCents.toFixed(2)}c`, axisX, vwapY - 12);
+      chartState.strikeGeometry.vwapTop = vwapY - 9;
+      chartState.strikeGeometry.vwapBottom = vwapY + 9;
+      chartState.strikeGeometry.vwapHandleX = vwapHandleX;
+      chartState.strikeGeometry.vwapHandleY = vwapY;
 
       const densityAxisY = height - 48;
       strikeContext.strokeStyle = '#344258';
@@ -951,7 +1317,7 @@
         drawOrderbookDistribution(orderbookDistribution, padding.left, padding, plotWidth, yFor);
       }
       strikeContext.fillStyle = '#c9d6e7';
-      strikeContext.fillText('density, % per cent', padding.left + plotWidth / 2, height - 12);
+      strikeContext.fillText('probability mass, % per bin', padding.left + plotWidth / 2, height - 12);
 
       strikeContext.save();
       strikeContext.fillStyle = '#c9d6e7';
@@ -963,7 +1329,36 @@
       if (strikePriceDisplay) strikePriceDisplay.textContent = `${formatNumber(strikePrice)} @ 50c`;
       if (fairPriceDisplay) fairPriceDisplay.textContent = `${fairCents.toFixed(2)} cents`;
       if (orderbookAreaDisplay) orderbookAreaDisplay.textContent = orderbookDistribution ? orderbookDistribution.area.toFixed(3) : '1.000';
+      if (edgeDisplay) {
+        const edgePercent = calculateEdgePercent(orderbookDistribution);
+        edgeDisplay.textContent = formatPercent(edgePercent);
+        edgeDisplay.classList.toggle('is-positive', edgePercent >= 0);
+        edgeDisplay.classList.toggle('is-negative', edgePercent < 0);
+      }
       tValue.textContent = selectedT.toFixed(2);
+    }
+
+    function drawQuoteLine(kind, cents, probability, color, padding, plotWidth, yFor) {
+      const y = yFor(cents);
+      const label = `${kind} ${cents.toFixed(2)}c q${probability.toFixed(2)}`;
+
+      strikeContext.save();
+      strikeContext.strokeStyle = color;
+      strikeContext.fillStyle = color;
+      strikeContext.lineWidth = 2;
+      strikeContext.setLineDash([6, 4]);
+      strikeContext.beginPath();
+      strikeContext.moveTo(padding.left, y);
+      strikeContext.lineTo(padding.left + plotWidth, y);
+      strikeContext.stroke();
+      strikeContext.setLineDash([]);
+      strikeContext.textAlign = kind === 'bid' ? 'left' : 'right';
+      strikeContext.textBaseline = 'middle';
+      strikeContext.font = '12px Inter, system-ui, sans-serif';
+      const labelX = kind === 'bid' ? padding.left + 8 : padding.left + plotWidth - 8;
+      const labelY = kind === 'bid' ? y + 12 : y - 12;
+      strikeContext.fillText(label, labelX, labelY);
+      strikeContext.restore();
     }
 
     function drawOrderbookDistribution(distribution, anchorX, padding, plotWidth, yFor) {
@@ -1017,6 +1412,16 @@
       requestDrawDistribution();
     }
 
+    function updateVwapFromStrikePoint(point) {
+      const geometry = chartState.strikeGeometry;
+      if (!geometry) return;
+
+      const boundedY = Math.min(geometry.centsBottom, Math.max(geometry.centsTop, point.y));
+      const rawCents = 100 - ((boundedY - geometry.centsTop) / (geometry.centsBottom - geometry.centsTop)) * 100;
+      chartState.vwapCents = Math.round(Math.min(100, Math.max(0, rawCents)) * 100) / 100;
+      requestDrawDistribution();
+    }
+
     function handleStrikePointerDown(event) {
       const geometry = chartState.strikeGeometry;
       if (!geometry) return;
@@ -1024,6 +1429,18 @@
       const point = getStrikeCanvasPoint(event);
       const onTAxis = point.x >= geometry.tLeft && point.x <= geometry.tRight &&
         point.y >= geometry.tTop && point.y <= geometry.tBottom;
+      const onVwapLine = point.x >= geometry.tLeft && point.x <= geometry.tRight &&
+        point.y >= geometry.vwapTop && point.y <= geometry.vwapBottom;
+      const vwapHandleDistance = Math.hypot(point.x - geometry.vwapHandleX, point.y - geometry.vwapHandleY);
+      const onVwap = onVwapLine || vwapHandleDistance <= geometry.vwapHandleRadius;
+
+      if (onVwap) {
+        chartState.vwapDragging = true;
+        strikeCanvas.setPointerCapture(event.pointerId);
+        updateVwapFromStrikePoint(point);
+        event.preventDefault();
+        return;
+      }
 
       if (!onTAxis) return;
 
@@ -1034,13 +1451,19 @@
     }
 
     function handleStrikePointerMove(event) {
+      if (chartState.vwapDragging) {
+        updateVwapFromStrikePoint(getStrikeCanvasPoint(event));
+        return;
+      }
+
       if (!chartState.tDragging) return;
       updateTFromStrikePoint(getStrikeCanvasPoint(event));
     }
 
     function handleStrikePointerUp(event) {
-      if (!chartState.tDragging) return;
+      if (!chartState.tDragging && !chartState.vwapDragging) return;
       chartState.tDragging = false;
+      chartState.vwapDragging = false;
       if (strikeCanvas.hasPointerCapture(event.pointerId)) strikeCanvas.releasePointerCapture(event.pointerId);
     }
 
@@ -1306,7 +1729,7 @@
 
       if (chartState.dragTarget === 'sigma-low' || chartState.dragTarget === 'sigma-high') {
         const draggedBps = Math.abs(bpsFromCanvasY(point.y));
-        const tScale = Math.max(0.000001, Math.sqrt(1 - getT()));
+        const tScale = Math.max(0.000001, Math.sqrt(getT()));
         syncSigma(draggedBps / tScale);
         return;
       }
@@ -1343,7 +1766,18 @@
       requestDrawDistribution();
     });
     tSlider.addEventListener('input', requestDrawDistribution);
+    positionSlider.addEventListener('input', requestDrawDistribution);
     priceDistributionSelect.addEventListener('change', requestDrawDistribution);
+    longButton.addEventListener('click', () => {
+      chartState.side = 'long';
+      updateSideButtons();
+      requestDrawDistribution();
+    });
+    shortButton.addEventListener('click', () => {
+      chartState.side = 'short';
+      updateSideButtons();
+      requestDrawDistribution();
+    });
     canvas.addEventListener('wheel', handleAxisWheel, { passive: false });
     canvas.addEventListener('pointerdown', handlePointerDown);
     canvas.addEventListener('pointermove', handlePointerMove);
@@ -1355,6 +1789,7 @@
     strikeCanvas.addEventListener('pointercancel', handleStrikePointerUp);
     window.addEventListener('resize', requestDrawDistribution);
 
+    updateSideButtons();
     drawDistribution();
   </script>
 </body>
