@@ -460,6 +460,13 @@
       font-weight: 650;
     }
 
+    .control-value {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+      font-variant-numeric: tabular-nums;
+    }
+
     .range-labels {
       display: flex;
       justify-content: space-between;
@@ -605,37 +612,6 @@
             <label for="strikePriceInput">Strike price</label>
             <input id="strikePriceInput" type="number" min="0" step="1" value="60000" inputmode="numeric">
           </div>
-        </div>
-
-        <div class="control-column">
-          <div class="field">
-            <label for="sigmaSlider">Sigma</label>
-            <input id="sigmaSlider" type="range" min="1" max="1000" step="1" value="250">
-            <div class="range-labels">
-              <span>1 bps</span>
-              <span>1000 bps</span>
-            </div>
-          </div>
-
-          <div class="field">
-            <label for="sigmaInput">Sigma value</label>
-            <div class="number-row">
-              <input id="sigmaInput" type="number" min="1" max="1000" step="1" value="250" inputmode="numeric">
-              <span class="unit">bps</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="control-column">
-          <div class="field">
-            <label for="tSlider">T</label>
-            <input id="tSlider" type="range" min="0" max="1" step="0.01" value="0.5">
-            <div class="range-labels">
-              <span>1</span>
-              <span id="tValue">0.50</span>
-              <span>0</span>
-            </div>
-          </div>
 
           <div class="field">
             <label for="priceDistributionSelect">Price Distribution</label>
@@ -645,6 +621,60 @@
               <option value="laplacian">Laplacian</option>
               <option value="logistic">Logistic</option>
             </select>
+          </div>
+        </div>
+
+        <div class="control-column">
+          <div class="field">
+            <label for="sigmaSlider">Sigma</label>
+            <input id="sigmaSlider" type="range" min="1" max="1000" step="1" value="250">
+            <div class="range-labels">
+              <span>1 bps</span>
+              <span id="sigmaValue" class="control-value">250 bps</span>
+              <span>1000 bps</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="tSlider">T</label>
+            <input id="tSlider" type="range" min="0" max="1" step="0.01" value="0.5">
+            <div class="range-labels">
+              <span>1</span>
+              <span id="tValue">0.50</span>
+              <span>0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-column">
+          <div class="field">
+            <label for="skewQSlider">skew_q</label>
+            <input id="skewQSlider" type="range" min="0" max="0.5" step="0.01" value="0.2">
+            <div class="range-labels">
+              <span>0</span>
+              <span id="skewQValue">0.20</span>
+              <span>0.50</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="spreadQSlider">spread_q</label>
+            <input id="spreadQSlider" type="range" min="0.01" max="0.4" step="0.01" value="0.12">
+            <div class="range-labels">
+              <span>0.01</span>
+              <span id="spreadQValue">0.12</span>
+              <span>0.40</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="minEdgeQSlider">min_edge_q</label>
+            <input id="minEdgeQSlider" type="range" min="0" max="0.1" step="0.005" value="0.02">
+            <div class="range-labels">
+              <span>0</span>
+              <span id="minEdgeQValue">0.020</span>
+              <span>0.10</span>
+            </div>
           </div>
         </div>
       </aside>
@@ -658,8 +688,9 @@
               <li>Use Current price and Strike price inputs to set the underlying price and the binary strike.</li>
               <li>Drag the Current and Strike horizontal lines on the Price Distribution chart to update those prices directly.</li>
               <li>Drag either +1 sigma or -1 sigma point on the Price Distribution chart to change Sigma. Both points control the same sigma value.</li>
-              <li>Use the Sigma slider or number input for exact sigma values from 1 to 1000 bps.</li>
+              <li>Use the Sigma slider for exact sigma values from 1 to 1000 bps.</li>
               <li>Use the T slider below, or drag the T point on the top axis of the Prediction Distribution chart.</li>
+              <li>Use skew_q, spread_q, and min_edge_q to control probability-space bid/ask quoting.</li>
               <li>Use Long or Short above the Prediction Distribution chart to choose the active side.</li>
               <li>Drag the VWAP line on the Prediction Distribution chart to update the displayed edge.</li>
               <li>Use the mouse wheel over the left bps axis or right price axis of the Price Distribution chart to zoom the visible price range.</li>
@@ -676,6 +707,7 @@
               <li>The Prediction Distribution samples possible future underlying prices over <code>T</code>, then maps each sampled price to a binary fair price using the same <code>sigma_T</code>.</li>
               <li>The resulting prediction distribution is plotted as probability mass per bin and normalized so the cumulative sum is 1.</li>
               <li>The green fair line on the Prediction Distribution chart is the mean of that plotted prediction distribution.</li>
+              <li>Bid and ask are CDF quantiles skewed by position: <code>center_q = 0.5 - position * skew_q</code>, with <code>spread_q</code> around center and <code>min_edge_q</code> around fair.</li>
               <li>The header percentage is expected edge over VWAP: Long uses <code>mean / VWAP - 1</code>, Short uses <code>(100 - mean) / (100 - VWAP) - 1</code>.</li>
             </ol>
           </div>
@@ -692,9 +724,15 @@
     const startPriceInput = document.getElementById('startPriceInput');
     const strikePriceInput = document.getElementById('strikePriceInput');
     const sigmaSlider = document.getElementById('sigmaSlider');
-    const sigmaInput = document.getElementById('sigmaInput');
+    const sigmaValue = document.getElementById('sigmaValue');
     const tSlider = document.getElementById('tSlider');
     const tValue = document.getElementById('tValue');
+    const skewQSlider = document.getElementById('skewQSlider');
+    const spreadQSlider = document.getElementById('spreadQSlider');
+    const minEdgeQSlider = document.getElementById('minEdgeQSlider');
+    const skewQValue = document.getElementById('skewQValue');
+    const spreadQValue = document.getElementById('spreadQValue');
+    const minEdgeQValue = document.getElementById('minEdgeQValue');
     const priceDistributionSelect = document.getElementById('priceDistributionSelect');
     const longButton = document.getElementById('longButton');
     const shortButton = document.getElementById('shortButton');
@@ -715,12 +753,8 @@
     const maxVisibleBps = 10000;
     const bpsSteps = 801;
     const orderbookBins = 501;
-    const quoteBaseSpreadProbability = 0.15;
-    const quoteSkewProbability = 0.25;
-    const quoteInventorySpreadProbability = 0.1;
-    const quoteMinProbability = 0.01;
-    const quoteMaxProbability = 0.99;
-    const quoteMinEdgeCents = 0.1;
+    const quoteMinProbability = 0.02;
+    const quoteMaxProbability = 0.98;
     let drawFrameId = 0;
     const chartState = {
       visibleBps: 1000,
@@ -762,6 +796,21 @@
     function getPosition() {
       const value = Number(positionSlider.value);
       return Number.isFinite(value) ? Math.min(1, Math.max(-1, value)) : 0;
+    }
+
+    function getSkewQ() {
+      const value = Number(skewQSlider.value);
+      return Number.isFinite(value) ? Math.min(0.5, Math.max(0, value)) : 0.2;
+    }
+
+    function getSpreadQ() {
+      const value = Number(spreadQSlider.value);
+      return Number.isFinite(value) ? Math.min(0.4, Math.max(0.01, value)) : 0.12;
+    }
+
+    function getMinEdgeQ() {
+      const value = Number(minEdgeQSlider.value);
+      return Number.isFinite(value) ? Math.min(0.1, Math.max(0, value)) : 0.02;
     }
 
     function getRemainingSigmaBps() {
@@ -955,19 +1004,30 @@
     function calculateQuoteCents(distribution) {
       const position = getPosition();
       const fairCents = calculatePredictionMeanCents(distribution);
-      const centerProbability = Math.min(quoteMaxProbability, Math.max(quoteMinProbability, 0.5 - position * quoteSkewProbability));
-      const halfSpreadProbability = quoteBaseSpreadProbability + Math.abs(position) * quoteInventorySpreadProbability;
-      const bidProbability = Math.min(quoteMaxProbability, Math.max(quoteMinProbability, centerProbability - halfSpreadProbability));
-      const askProbability = Math.min(quoteMaxProbability, Math.max(quoteMinProbability, centerProbability + halfSpreadProbability));
-      const rawBid = quantileFromDistribution(distribution, bidProbability);
-      const rawAsk = quantileFromDistribution(distribution, askProbability);
+      const fairProbability = cdfProbabilityForCents(distribution, fairCents);
+      const centerProbability = Math.min(quoteMaxProbability, Math.max(quoteMinProbability, 0.5 - position * getSkewQ()));
+      const halfSpreadProbability = getSpreadQ();
+      const minEdgeProbability = getMinEdgeQ();
+      const rawBidProbability = Math.min(quoteMaxProbability, Math.max(quoteMinProbability, centerProbability - halfSpreadProbability));
+      const rawAskProbability = Math.min(quoteMaxProbability, Math.max(quoteMinProbability, centerProbability + halfSpreadProbability));
+      const bidProbability = Math.min(rawBidProbability, Math.max(quoteMinProbability, fairProbability - minEdgeProbability));
+      const askProbability = Math.max(rawAskProbability, Math.min(quoteMaxProbability, fairProbability + minEdgeProbability));
 
       return {
-        bid: Math.max(0, Math.min(rawBid, fairCents - quoteMinEdgeCents)),
-        ask: Math.min(100, Math.max(rawAsk, fairCents + quoteMinEdgeCents)),
+        bid: quantileFromDistribution(distribution, bidProbability),
+        ask: quantileFromDistribution(distribution, askProbability),
         bidProbability,
         askProbability
       };
+    }
+
+    function cdfProbabilityForCents(distribution, cents) {
+      if (!distribution) return 0.5;
+
+      const indexLimit = Math.min(distribution.weights.length - 1, Math.max(0, Math.floor(cents / distribution.centsStep)));
+      let cumulative = 0;
+      for (let index = 0; index <= indexLimit; index += 1) cumulative += distribution.weights[index];
+      return Math.min(quoteMaxProbability, Math.max(quoteMinProbability, cumulative));
     }
 
     function binaryPriceCents(samplePrice, strikePrice, remainingSigmaBps) {
@@ -1088,7 +1148,18 @@
     function syncSigma(value) {
       const sigmaBps = clampSigma(value);
       sigmaSlider.value = sigmaBps;
-      sigmaInput.value = sigmaBps;
+      sigmaValue.textContent = `${sigmaBps} bps`;
+      requestDrawDistribution();
+    }
+
+    function updateQuoteControlValues() {
+      skewQValue.textContent = getSkewQ().toFixed(2);
+      spreadQValue.textContent = getSpreadQ().toFixed(2);
+      minEdgeQValue.textContent = getMinEdgeQ().toFixed(3);
+    }
+
+    function handleQuoteControlInput() {
+      updateQuoteControlValues();
       requestDrawDistribution();
     }
 
@@ -1751,10 +1822,6 @@
     }
 
     sigmaSlider.addEventListener('input', (event) => syncSigma(event.target.value));
-    sigmaInput.addEventListener('input', (event) => {
-      if (event.target.value !== '') syncSigma(event.target.value);
-    });
-    sigmaInput.addEventListener('blur', (event) => syncSigma(event.target.value));
     startPriceInput.addEventListener('input', requestDrawDistribution);
     startPriceInput.addEventListener('blur', () => {
       if (startPriceInput.value === '' || Number(startPriceInput.value) < 0) startPriceInput.value = '60000';
@@ -1767,6 +1834,9 @@
     });
     tSlider.addEventListener('input', requestDrawDistribution);
     positionSlider.addEventListener('input', requestDrawDistribution);
+    skewQSlider.addEventListener('input', handleQuoteControlInput);
+    spreadQSlider.addEventListener('input', handleQuoteControlInput);
+    minEdgeQSlider.addEventListener('input', handleQuoteControlInput);
     priceDistributionSelect.addEventListener('change', requestDrawDistribution);
     longButton.addEventListener('click', () => {
       chartState.side = 'long';
@@ -1790,6 +1860,8 @@
     window.addEventListener('resize', requestDrawDistribution);
 
     updateSideButtons();
+  syncSigma(sigmaSlider.value);
+  updateQuoteControlValues();
     drawDistribution();
   </script>
 </body>
