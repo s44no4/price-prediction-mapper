@@ -31,7 +31,7 @@
     }
 
     main {
-      width: min(1240px, calc(100vw - 32px));
+      width: min(1540px, calc(100vw - 32px));
       margin: 0 auto;
       padding: 28px 0;
     }
@@ -100,15 +100,34 @@
 
     .plots {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 42px;
-      gap: 16px;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 42px minmax(220px, 0.7fr) minmax(220px, 0.55fr);
+      gap: 0;
       align-items: stretch;
+      --plot-header-height: 28px;
+      --main-plot-height: 720px;
+      --exposure-plot-height: 240px;
     }
 
     .plot-block {
       display: grid;
+      grid-template-rows: var(--plot-header-height) auto auto;
       gap: 8px;
       min-width: 0;
+      align-content: start;
+    }
+
+    .plots > .plot-block:first-child,
+    .position-slider-column + .plot-block {
+      margin-right: 16px;
+    }
+
+    .position-slider-column + .plot-block {
+      margin-left: 16px;
+      margin-right: 0;
+    }
+
+    .position-slider-column + .plot-block + .plot-block {
+      margin-left: 16px;
     }
 
     .plot-title {
@@ -179,14 +198,159 @@
 
     .chart-wrap {
       width: 100%;
-      height: 720px;
+      height: var(--main-plot-height);
       min-height: 0;
     }
 
+    .imbalance-wrap,
     .strike-wrap {
       width: 100%;
-      height: 720px;
+      height: var(--main-plot-height);
       min-height: 0;
+    }
+
+    .exposure-wrap {
+      width: 100%;
+      height: var(--exposure-plot-height);
+      min-height: 0;
+    }
+
+    .pnl-wrap {
+      width: 100%;
+      height: var(--exposure-plot-height);
+      min-height: 0;
+      margin-top: 12px;
+    }
+
+    .pnl-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 12px;
+      color: #c9d6e7;
+      font-size: 12px;
+      font-weight: 650;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .pnl-metrics-table {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1px;
+      margin-top: 6px;
+      border: 1px solid #263244;
+      background: #263244;
+      font-size: 10px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .pnl-metrics-column {
+      display: grid;
+      gap: 1px;
+      min-width: 0;
+      background: #263244;
+    }
+
+    .pnl-metrics-column div {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+      padding: 5px 6px;
+      background: #0c121b;
+    }
+
+    .pnl-metrics-table span {
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .pnl-metrics-table strong {
+      color: #d6deeb;
+      font-size: 11px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .simulation-progress {
+      width: 100%;
+      height: 8px;
+      margin-top: 6px;
+      border: 1px solid #263244;
+      background: #0b111a;
+      overflow: hidden;
+    }
+
+    .simulation-progress-fill {
+      width: 0%;
+      height: 100%;
+      background: var(--accent);
+      transition: width 80ms linear;
+    }
+
+    .exposure-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 28px;
+      min-width: 0;
+    }
+
+    .exposure-title-row .plot-title {
+      min-height: 0;
+    }
+
+    .exposure-select {
+      width: min(150px, 56%);
+      height: 28px;
+      font-size: 12px;
+      padding: 0 24px 0 8px;
+    }
+
+    .exposure-sim-controls {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 6px;
+      min-width: 0;
+    }
+
+    .exposure-sim-controls .field {
+      gap: 6px;
+    }
+
+    .exposure-sim-controls label {
+      font-size: 12px;
+    }
+
+    .simulation-action-row {
+      display: flex;
+      align-items: center;
+      justify-content: stretch;
+      gap: 10px;
+      grid-column: 1 / -1;
+    }
+
+    .run-simulation-button {
+      height: 32px;
+      width: 100%;
+      padding: 0 14px;
+      border: 1px solid rgba(66, 165, 255, 0.72);
+      background: rgba(66, 165, 255, 0.14);
+      color: #c9e6ff;
+      font-size: 12px;
+      font-weight: 750;
+      cursor: pointer;
+    }
+
+    .run-simulation-button:hover,
+    .run-simulation-button:focus-visible {
+      border-color: #8fd0ff;
+      color: var(--ink);
+      outline: none;
     }
 
     .prediction-plot-row {
@@ -196,13 +360,14 @@
 
     .position-slider-column {
       display: grid;
-      grid-template-rows: auto 720px auto;
+      grid-template-rows: var(--plot-header-height) var(--main-plot-height) auto;
       gap: 8px;
       min-width: 0;
+      align-content: start;
     }
 
     .position-title-spacer {
-      min-height: 28px;
+      min-height: var(--plot-header-height);
     }
 
     .position-legend-spacer {
@@ -218,7 +383,6 @@
       width: 42px;
       height: 100%;
       min-height: 0;
-      margin-top: -1px;
       background: rgba(12, 18, 27, 0.78);
       border: 1px solid rgba(52, 66, 88, 0.72);
     }
@@ -370,6 +534,7 @@
       display: grid;
       gap: 16px;
       min-width: 0;
+      align-content: start;
     }
 
     label {
@@ -475,6 +640,28 @@
       font-variant-numeric: tabular-nums;
     }
 
+    .editable-slider-value {
+      min-width: 44px;
+      text-align: center;
+      cursor: text;
+      color: #c9d6e7;
+      border: 1px solid transparent;
+      padding: 1px 4px;
+    }
+
+    .editable-slider-value:hover,
+    .editable-slider-value:focus {
+      border-color: #344258;
+      background: #0b111a;
+      outline: none;
+    }
+
+    .editable-slider-value.is-editing {
+      border-color: var(--accent);
+      color: var(--ink);
+      background: #0b111a;
+    }
+
     .info-panel {
       background: var(--panel);
       border: 1px solid var(--line);
@@ -522,15 +709,17 @@
       }
 
       .shell { grid-template-columns: 1fr; }
-      .plots { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 42px; }
-      .controls { grid-template-columns: 1fr; }
+      .plots { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 42px minmax(180px, 0.7fr) minmax(180px, 0.55fr); }
+      .plots {
+        --plot-header-height: 72px;
+        --main-plot-height: 560px;
+        --exposure-plot-height: 187px;
+      }
+      .controls { grid-template-columns: repeat(3, minmax(0, 1fr)); }
       .info-grid { grid-template-columns: 1fr; }
       .chart-panel, .controls { padding: 16px; }
       .chart-header { display: grid; }
       .plot-title-row { align-items: start; flex-direction: column; }
-      .chart-wrap { height: 560px; }
-      .strike-wrap { height: 560px; }
-      .position-slider-column { grid-template-rows: auto 560px auto; }
     }
   </style>
 </head>
@@ -547,7 +736,15 @@
 
         <div class="plots">
           <div class="plot-block">
-            <div class="plot-title">Price Distribution</div>
+            <div class="exposure-title-row">
+              <div class="plot-title">Price Distribution</div>
+              <select id="priceDistributionSelect" class="exposure-select" aria-label="Price Distribution">
+                <option value="gaussian" selected>Gaussian</option>
+                <option value="studentT">Student-t</option>
+                <option value="laplacian">Laplacian</option>
+                <option value="logistic">Logistic</option>
+              </select>
+            </div>
             <div class="chart-wrap">
               <canvas id="distributionChart" width="760" height="430" aria-label="Vertical Gaussian distribution chart in bps"></canvas>
             </div>
@@ -581,6 +778,7 @@
               <span class="legend-item"><span class="swatch bid"></span>Bid</span>
               <span class="legend-item"><span class="swatch ask"></span>Ask</span>
               <span class="legend-item"><span class="swatch t"></span>T handle</span>
+              <span class="legend-item"><span class="swatch strike"></span>Trade cutoff</span>
             </div>
           </div>
 
@@ -596,33 +794,124 @@
             </div>
             <div class="position-legend-spacer"></div>
           </div>
+
+          <div class="plot-block">
+            <div class="exposure-title-row">
+              <div class="plot-title">Trade Imbalance</div>
+              <select id="imbalanceModeSelect" class="exposure-select" aria-label="Trade imbalance curve">
+                <option value="tanh" selected>tanh</option>
+                <option value="linearClamp">linear clamp</option>
+                <option value="softsign">softsign</option>
+                <option value="deadZone">dead-zone</option>
+                <option value="power">power</option>
+                <option value="tanhInverse">tanh inverse</option>
+                <option value="linearClampInverse">linear clamp inverse</option>
+                <option value="softsignInverse">softsign inverse</option>
+                <option value="deadZoneInverse">dead-zone inverse</option>
+                <option value="powerInverse">power inverse</option>
+              </select>
+            </div>
+            <div class="imbalance-wrap">
+              <canvas id="imbalanceChart" width="300" height="430" aria-label="Trade imbalance by EV from 0 to 100 cents"></canvas>
+            </div>
+            <div class="legend" aria-label="Trade imbalance legend">
+              <span class="legend-item"><span class="swatch"></span><span id="imbalanceLegendLabel">tanh imbalance</span></span>
+              <span class="legend-item"><span class="swatch fair"></span>Fair EV</span>
+              <span class="legend-item"><span class="swatch t"></span><span id="imbalanceParamLegendLabel">multiplier handle</span></span>
+            </div>
+          </div>
+
+          <div class="plot-block">
+            <div class="exposure-title-row">
+              <div class="plot-title">Exposure Cap</div>
+              <select id="exposureFormulaSelect" class="exposure-select" aria-label="Exposure formula">
+                <option value="sqrtT" selected>sqrt(T)</option>
+                <option value="constant">constant</option>
+              </select>
+            </div>
+            <div class="exposure-wrap">
+              <canvas id="exposureChart" width="300" height="215" aria-label="Exposure cap over time to expiry"></canvas>
+            </div>
+            <div>
+              <div class="legend" aria-label="Exposure cap legend">
+                <span class="legend-item"><span class="swatch low"></span>Long cap</span>
+                <span class="legend-item"><span class="swatch high"></span>Short cap</span>
+              </div>
+              <div class="pnl-title-row">
+                <span>Empirical PnL</span>
+                <span id="pnlMeanDisplay">mean --</span>
+              </div>
+              <div id="pnlMetricsTable" class="pnl-metrics-table" aria-label="Empirical PnL risk metrics">
+                <div class="pnl-metrics-column">
+                  <div><span>win rate</span><strong id="pnlWinRate">--</strong></div>
+                  <div><span>loss rate</span><strong id="pnlLossRate">--</strong></div>
+                </div>
+                <div class="pnl-metrics-column">
+                  <div><span>cvar 5%</span><strong id="pnlCvar5">--</strong></div>
+                  <div><span>cvar 1%</span><strong id="pnlCvar1">--</strong></div>
+                </div>
+                <div class="pnl-metrics-column">
+                  <div><span>sharpe</span><strong id="pnlSharpe">--</strong></div>
+                  <div><span>p95 drawdown</span><strong id="pnlP95Drawdown">--</strong></div>
+                </div>
+              </div>
+              <div class="pnl-wrap">
+                <canvas id="pnlChart" width="300" height="215" aria-label="Empirical PnL histogram"></canvas>
+              </div>
+              <div class="simulation-progress" aria-label="Simulation progress">
+                <div id="simulationProgressFill" class="simulation-progress-fill"></div>
+              </div>
+              <div class="exposure-sim-controls" aria-label="Simulation setup controls">
+                <div class="field">
+                  <label for="nPathsSlider">n_paths</label>
+                  <input id="nPathsSlider" type="range" min="100" max="10000" step="100" value="1000">
+                  <div class="range-labels">
+                    <span>100</span>
+                    <span id="nPathsValue" class="editable-slider-value" data-slider-id="nPathsSlider" tabindex="0">1000</span>
+                    <span>10000</span>
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="nStepsSlider">n_steps</label>
+                  <input id="nStepsSlider" type="range" min="1" max="250" step="1" value="50">
+                  <div class="range-labels">
+                    <span>1</span>
+                    <span id="nStepsValue" class="editable-slider-value" data-slider-id="nStepsSlider" tabindex="0">50</span>
+                    <span>250</span>
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="exposureSplitsSlider">exposure_splits</label>
+                  <input id="exposureSplitsSlider" type="range" min="1" max="1000" step="1" value="100">
+                  <div class="range-labels">
+                    <span>1</span>
+                    <span id="exposureSplitsValue" class="editable-slider-value" data-slider-id="exposureSplitsSlider" tabindex="0">100</span>
+                    <span>1000</span>
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="tradesPerStepSlider">trades_per_step</label>
+                  <input id="tradesPerStepSlider" type="range" min="0.01" max="100" step="0.01" value="1">
+                  <div class="range-labels">
+                    <span>0.01</span>
+                    <span id="tradesPerStepValue" class="editable-slider-value" data-slider-id="tradesPerStepSlider" tabindex="0">1.00</span>
+                    <span>100</span>
+                  </div>
+                </div>
+                <div class="simulation-action-row">
+                  <button id="runSimulationButton" class="run-simulation-button" type="button">Run</button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       <aside class="controls" aria-label="Distribution controls">
         <h2>Controls</h2>
 
-        <div class="control-column">
-          <div class="field">
-            <label for="startPriceInput">Current price</label>
-            <input id="startPriceInput" type="number" min="0" step="1" value="60000" inputmode="numeric">
-          </div>
-
-          <div class="field">
-            <label for="strikePriceInput">Strike price</label>
-            <input id="strikePriceInput" type="number" min="0" step="1" value="60000" inputmode="numeric">
-          </div>
-
-          <div class="field">
-            <label for="priceDistributionSelect">Price Distribution</label>
-            <select id="priceDistributionSelect" aria-label="Price Distribution">
-              <option value="gaussian" selected>Gaussian</option>
-              <option value="studentT">Student-t</option>
-              <option value="laplacian">Laplacian</option>
-              <option value="logistic">Logistic</option>
-            </select>
-          </div>
-        </div>
+        <input id="startPriceInput" type="hidden" value="60000">
+        <input id="strikePriceInput" type="hidden" value="60000">
 
         <div class="control-column">
           <div class="field">
@@ -630,50 +919,57 @@
             <input id="sigmaSlider" type="range" min="1" max="1000" step="1" value="250">
             <div class="range-labels">
               <span>1 bps</span>
-              <span id="sigmaValue" class="control-value">250 bps</span>
+              <span id="sigmaValue" class="control-value editable-slider-value" data-slider-id="sigmaSlider" data-unit=" bps" tabindex="0">250 bps</span>
               <span>1000 bps</span>
-            </div>
-          </div>
-
-          <div class="field">
-            <label for="tSlider">T</label>
-            <input id="tSlider" type="range" min="0" max="1" step="0.01" value="0.5">
-            <div class="range-labels">
-              <span>1</span>
-              <span id="tValue">0.50</span>
-              <span>0</span>
             </div>
           </div>
         </div>
 
         <div class="control-column">
           <div class="field">
-            <label for="skewQSlider">skew_q</label>
-            <input id="skewQSlider" type="range" min="0" max="0.5" step="0.01" value="0.2">
+            <label for="minEdgeQSlider">min_edge_q</label>
+            <input id="minEdgeQSlider" type="range" min="-0.1" max="0.1" step="0.005" value="0">
             <div class="range-labels">
-              <span>0</span>
-              <span id="skewQValue">0.20</span>
-              <span>0.50</span>
+              <span>-0.10</span>
+              <span id="minEdgeQValue" class="editable-slider-value" data-slider-id="minEdgeQSlider" tabindex="0">0.000</span>
+              <span>0.10</span>
             </div>
           </div>
 
+          <div class="field">
+            <label for="maxEdgeQSlider">max_edge_q</label>
+            <input id="maxEdgeQSlider" type="range" min="0" max="0.5" step="0.005" value="0.25">
+            <div class="range-labels">
+              <span>0.00</span>
+              <span id="maxEdgeQValue" class="editable-slider-value" data-slider-id="maxEdgeQSlider" tabindex="0">0.250</span>
+              <span>0.50</span>
+            </div>
+          </div>
+        </div>
+
+        <input id="tSlider" type="hidden" min="0" max="1" step="0.01" value="0.5">
+        <span id="tValue" class="editable-slider-value" data-slider-id="tSlider" tabindex="0" hidden>0.50</span>
+        <input id="tradeUntilTSlider" type="hidden" min="0" max="1" step="0.01" value="0.1">
+        <input id="imbalanceParamSlider" type="hidden" min="0.25" max="4" step="0.05" value="1">
+
+        <div class="control-column">
           <div class="field">
             <label for="spreadQSlider">spread_q</label>
             <input id="spreadQSlider" type="range" min="0.01" max="0.4" step="0.01" value="0.12">
             <div class="range-labels">
               <span>0.01</span>
-              <span id="spreadQValue">0.12</span>
+              <span id="spreadQValue" class="editable-slider-value" data-slider-id="spreadQSlider" tabindex="0">0.12</span>
               <span>0.40</span>
             </div>
           </div>
 
           <div class="field">
-            <label for="minEdgeQSlider">min_edge_q</label>
-            <input id="minEdgeQSlider" type="range" min="0" max="0.1" step="0.005" value="0.02">
+            <label for="skewQSlider">skew_q</label>
+            <input id="skewQSlider" type="range" min="0" max="0.5" step="0.01" value="0.2">
             <div class="range-labels">
               <span>0</span>
-              <span id="minEdgeQValue">0.020</span>
-              <span>0.10</span>
+              <span id="skewQValue" class="editable-slider-value" data-slider-id="skewQSlider" tabindex="0">0.20</span>
+              <span>0.50</span>
             </div>
           </div>
         </div>
@@ -685,12 +981,16 @@
           <div>
             <h3>Controls</h3>
             <ul>
-              <li>Use Current price and Strike price inputs to set the underlying price and the binary strike.</li>
+              <li>Drag the Current and Strike horizontal lines on the Price Distribution chart to set the underlying price and the binary strike.</li>
               <li>Drag the Current and Strike horizontal lines on the Price Distribution chart to update those prices directly.</li>
               <li>Drag either +1 sigma or -1 sigma point on the Price Distribution chart to change Sigma. Both points control the same sigma value.</li>
               <li>Use the Sigma slider for exact sigma values from 1 to 1000 bps.</li>
-              <li>Use the T slider below, or drag the T point on the top axis of the Prediction Distribution chart.</li>
-              <li>Use skew_q, spread_q, and min_edge_q to control probability-space bid/ask quoting.</li>
+              <li>Drag the T point on the top axis of the Prediction Distribution chart to set time remaining, and drag the trade cutoff hatch to stop new trades below that T.</li>
+              <li>Use skew_q, spread_q, min_edge_q, and max_edge_q to control probability-space bid/ask quoting.</li>
+              <li>Use Trade Imbalance to see how EV from 0 to 100 cents maps into Yes/No demand from -1 to 1, and drag its top-axis handle to tune multiplier or power.</li>
+              <li>Use the Exposure Cap formula dropdown to choose how max long and short exposure reduce toward expiry.</li>
+              <li>Use n_paths, n_steps, exposure_splits, and trades_per_step as the minimal simulation setup controls.</li>
+              <li>Click Run to simulate simple path PnL, draw the empirical PnL histogram, and update terminal risk metrics.</li>
               <li>Use Long or Short above the Prediction Distribution chart to choose the active side.</li>
               <li>Drag the VWAP line on the Prediction Distribution chart to update the displayed edge.</li>
               <li>Use the mouse wheel over the left bps axis or right price axis of the Price Distribution chart to zoom the visible price range.</li>
@@ -708,6 +1008,10 @@
               <li>The resulting prediction distribution is plotted as probability mass per bin and normalized so the cumulative sum is 1.</li>
               <li>The green fair line on the Prediction Distribution chart is the mean of that plotted prediction distribution.</li>
               <li>Bid and ask are CDF quantiles skewed by position: <code>center_q = 0.5 - position * skew_q</code>, with <code>spread_q</code> around center and <code>min_edge_q</code> around fair.</li>
+              <li>The simulation starts with <code>position = 0</code> and <code>cash = 0</code>, updates quotes and exposure after every trade, and settles at 0 or 100.</li>
+              <li><code>p95 drawdown</code> is a terminal-loss proxy from final PnL, not path max drawdown.</li>
+              <li>Trade Imbalance maps <code>EV - 50</code> into a bounded demand signal using tanh, linear clamp, softsign, dead-zone, power, or their inverse curves.</li>
+              <li>The Exposure Cap plot currently supports <code>sqrt(T)</code> and constant <code>1</code> / <code>-1</code> caps over the full 1 to 0 time range.</li>
               <li>The header percentage is expected edge over VWAP: Long uses <code>mean / VWAP - 1</code>, Short uses <code>(100 - mean) / (100 - VWAP) - 1</code>.</li>
             </ol>
           </div>
@@ -721,19 +1025,50 @@
     const context = canvas.getContext('2d');
     const strikeCanvas = document.getElementById('strikeChart');
     const strikeContext = strikeCanvas.getContext('2d');
+    const imbalanceCanvas = document.getElementById('imbalanceChart');
+    const imbalanceContext = imbalanceCanvas.getContext('2d');
+    const exposureCanvas = document.getElementById('exposureChart');
+    const exposureContext = exposureCanvas.getContext('2d');
+    const pnlCanvas = document.getElementById('pnlChart');
+    const pnlContext = pnlCanvas.getContext('2d');
     const startPriceInput = document.getElementById('startPriceInput');
     const strikePriceInput = document.getElementById('strikePriceInput');
     const sigmaSlider = document.getElementById('sigmaSlider');
     const sigmaValue = document.getElementById('sigmaValue');
     const tSlider = document.getElementById('tSlider');
     const tValue = document.getElementById('tValue');
+    const tradeUntilTSlider = document.getElementById('tradeUntilTSlider');
     const skewQSlider = document.getElementById('skewQSlider');
     const spreadQSlider = document.getElementById('spreadQSlider');
     const minEdgeQSlider = document.getElementById('minEdgeQSlider');
+    const maxEdgeQSlider = document.getElementById('maxEdgeQSlider');
     const skewQValue = document.getElementById('skewQValue');
     const spreadQValue = document.getElementById('spreadQValue');
     const minEdgeQValue = document.getElementById('minEdgeQValue');
+    const maxEdgeQValue = document.getElementById('maxEdgeQValue');
     const priceDistributionSelect = document.getElementById('priceDistributionSelect');
+    const imbalanceModeSelect = document.getElementById('imbalanceModeSelect');
+    const imbalanceLegendLabel = document.getElementById('imbalanceLegendLabel');
+    const imbalanceParamSlider = document.getElementById('imbalanceParamSlider');
+    const imbalanceParamLegendLabel = document.getElementById('imbalanceParamLegendLabel');
+    const exposureFormulaSelect = document.getElementById('exposureFormulaSelect');
+    const nPathsSlider = document.getElementById('nPathsSlider');
+    const nStepsSlider = document.getElementById('nStepsSlider');
+    const exposureSplitsSlider = document.getElementById('exposureSplitsSlider');
+    const tradesPerStepSlider = document.getElementById('tradesPerStepSlider');
+    const runSimulationButton = document.getElementById('runSimulationButton');
+    const nPathsValue = document.getElementById('nPathsValue');
+    const nStepsValue = document.getElementById('nStepsValue');
+    const exposureSplitsValue = document.getElementById('exposureSplitsValue');
+    const tradesPerStepValue = document.getElementById('tradesPerStepValue');
+    const pnlMeanDisplay = document.getElementById('pnlMeanDisplay');
+    const pnlWinRate = document.getElementById('pnlWinRate');
+    const pnlLossRate = document.getElementById('pnlLossRate');
+    const pnlCvar5 = document.getElementById('pnlCvar5');
+    const pnlCvar1 = document.getElementById('pnlCvar1');
+    const pnlSharpe = document.getElementById('pnlSharpe');
+    const pnlP95Drawdown = document.getElementById('pnlP95Drawdown');
+    const simulationProgressFill = document.getElementById('simulationProgressFill');
     const longButton = document.getElementById('longButton');
     const shortButton = document.getElementById('shortButton');
     const edgeDisplay = document.getElementById('edgeDisplay');
@@ -755,7 +1090,23 @@
     const orderbookBins = 501;
     const quoteMinProbability = 0.02;
     const quoteMaxProbability = 0.98;
+    const imbalanceSensitivityCents = 15;
+    const imbalanceDeadZoneCents = 5;
+    const imbalanceParamDefaults = {
+      tanh: 1,
+      linearClamp: 1,
+      softsign: 1,
+      deadZone: 1,
+      power: 1.6,
+      tanhInverse: 1,
+      linearClampInverse: 1,
+      softsignInverse: 1,
+      deadZoneInverse: 1,
+      powerInverse: 1.6
+    };
     let drawFrameId = 0;
+    let spareNormalRandom = null;
+    const inverseCdfCache = new Map();
     const chartState = {
       visibleBps: 1000,
       centerPrice: null,
@@ -766,10 +1117,22 @@
       axisDrag: null,
       lastGeometry: null,
       strikeGeometry: null,
+      imbalanceGeometry: null,
+      exposureGeometry: null,
+      pnlGeometry: null,
+      crosshair: null,
       tDragging: false,
+      tradeUntilTDragging: false,
+      imbalanceParamDragging: false,
       vwapDragging: false,
       vwapCents: 50,
-      side: 'long'
+      side: 'long',
+      simulationPnls: null,
+      simulationMean: null,
+      pnlRenderCache: null,
+      simulationRunning: false,
+      simulationWorkers: [],
+      simulationWorkerUrl: null
     };
 
     function clampSigma(value) {
@@ -793,6 +1156,11 @@
       return Number.isFinite(value) ? 1 - Math.min(1, Math.max(0, value)) : 0.5;
     }
 
+    function getTradeUntilT() {
+      const value = Number(tradeUntilTSlider.value);
+      return Number.isFinite(value) ? Math.min(1, Math.max(0, value)) : 0.1;
+    }
+
     function getPosition() {
       const value = Number(positionSlider.value);
       return Number.isFinite(value) ? Math.min(1, Math.max(-1, value)) : 0;
@@ -810,7 +1178,32 @@
 
     function getMinEdgeQ() {
       const value = Number(minEdgeQSlider.value);
-      return Number.isFinite(value) ? Math.min(0.1, Math.max(0, value)) : 0.02;
+      return Number.isFinite(value) ? Math.min(0.1, Math.max(-0.1, value)) : 0;
+    }
+
+    function getMaxEdgeQ() {
+      const value = Number(maxEdgeQSlider.value);
+      return Number.isFinite(value) ? Math.min(0.5, Math.max(0, value)) : 0.25;
+    }
+
+    function getNPaths() {
+      const value = Number(nPathsSlider.value);
+      return Number.isFinite(value) ? Math.min(10000, Math.max(100, Math.round(value))) : 1000;
+    }
+
+    function getNSteps() {
+      const value = Number(nStepsSlider.value);
+      return Number.isFinite(value) ? Math.min(250, Math.max(1, Math.round(value))) : 50;
+    }
+
+    function getExposureSplits() {
+      const value = Number(exposureSplitsSlider.value);
+      return Number.isFinite(value) ? Math.min(1000, Math.max(1, Math.round(value))) : 100;
+    }
+
+    function getTradesPerStep() {
+      const value = Number(tradesPerStepSlider.value);
+      return Number.isFinite(value) ? Math.min(100, Math.max(0.01, value)) : 1;
     }
 
     function getRemainingSigmaBps() {
@@ -913,6 +1306,31 @@
       return (low + high) / 2;
     }
 
+    function randomNormal() {
+      if (spareNormalRandom !== null) {
+        const value = spareNormalRandom;
+        spareNormalRandom = null;
+        return value;
+      }
+      let first = 0;
+      let second = 0;
+      while (first <= Number.EPSILON) first = Math.random();
+      second = Math.random();
+      const radius = Math.sqrt(-2 * Math.log(first));
+      const angle = 2 * Math.PI * second;
+      spareNormalRandom = radius * Math.sin(angle);
+      return radius * Math.cos(angle);
+    }
+
+    function cachedInverseCdf(modelKey, model, probability) {
+      const boundedProbability = Math.min(1 - 1e-12, Math.max(1e-12, probability));
+      const cacheKey = `${modelKey}:${boundedProbability.toFixed(6)}`;
+      if (inverseCdfCache.has(cacheKey)) return inverseCdfCache.get(cacheKey);
+      const value = model.inverseCdf(boundedProbability);
+      inverseCdfCache.set(cacheKey, value);
+      return value;
+    }
+
     const distributionModels = {
       gaussian: {
         pdf: normalPdf,
@@ -950,6 +1368,61 @@
         }
       }
     };
+
+    const imbalanceModeLabels = {
+      tanh: 'tanh imbalance',
+      linearClamp: 'linear clamp imbalance',
+      softsign: 'softsign imbalance',
+      deadZone: 'dead-zone imbalance',
+      power: 'power imbalance',
+      tanhInverse: 'inverse tanh imbalance',
+      linearClampInverse: 'inverse linear clamp imbalance',
+      softsignInverse: 'inverse softsign imbalance',
+      deadZoneInverse: 'inverse dead-zone imbalance',
+      powerInverse: 'inverse power imbalance'
+    };
+
+    function clampUnit(value) {
+      return Math.min(1, Math.max(-1, value));
+    }
+
+    function getImbalanceParam() {
+      return Number(imbalanceParamSlider.value) || imbalanceParamDefaults[imbalanceModeSelect.value] || 1;
+    }
+
+    function getBaseImbalanceMode(mode) {
+      return mode.endsWith('Inverse') ? mode.slice(0, -7) : mode;
+    }
+
+    function calculateTradeImbalance(evCents, mode = imbalanceModeSelect.value, param = getImbalanceParam()) {
+      const baseMode = getBaseImbalanceMode(mode);
+      const edgeCents = evCents - 50;
+      const multiplier = Math.max(0.000001, param);
+      let imbalance;
+      if (baseMode === 'linearClamp') imbalance = clampUnit((edgeCents / imbalanceSensitivityCents) * multiplier);
+      else if (baseMode === 'softsign') imbalance = (edgeCents * multiplier) / (Math.abs(edgeCents * multiplier) + imbalanceSensitivityCents);
+      else if (baseMode === 'deadZone') {
+        const magnitude = Math.abs(edgeCents);
+        imbalance = magnitude <= imbalanceDeadZoneCents ? 0 : clampUnit(Math.sign(edgeCents) * ((magnitude - imbalanceDeadZoneCents) / imbalanceSensitivityCents) * multiplier);
+      } else if (baseMode === 'power') {
+        imbalance = Math.sign(edgeCents) * Math.min(1, Math.abs(edgeCents / 50) ** multiplier);
+      } else {
+        imbalance = Math.tanh((edgeCents / imbalanceSensitivityCents) * multiplier);
+      }
+      return mode.endsWith('Inverse') ? -imbalance : imbalance;
+    }
+
+    function updateImbalanceParamControl(resetToDefault = false) {
+      const mode = imbalanceModeSelect.value;
+      const isPower = getBaseImbalanceMode(mode) === 'power';
+      const parameterName = isPower ? 'power' : 'multiplier';
+      imbalanceParamLegendLabel.textContent = `${parameterName} handle`;
+      imbalanceParamSlider.setAttribute('aria-label', `Trade imbalance ${parameterName}`);
+      imbalanceParamSlider.min = '0.25';
+      imbalanceParamSlider.max = '4';
+      imbalanceParamSlider.step = '0.05';
+      if (resetToDefault) imbalanceParamSlider.value = String(imbalanceParamDefaults[mode] || 1);
+    }
 
     function getDistributionModel() {
       return distributionModels[priceDistributionSelect.value] || distributionModels.gaussian;
@@ -1005,19 +1478,98 @@
       const position = getPosition();
       const fairCents = calculatePredictionMeanCents(distribution);
       const fairProbability = cdfProbabilityForCents(distribution, fairCents);
-      const centerProbability = Math.min(quoteMaxProbability, Math.max(quoteMinProbability, 0.5 - position * getSkewQ()));
-      const halfSpreadProbability = getSpreadQ();
-      const minEdgeProbability = getMinEdgeQ();
-      const rawBidProbability = Math.min(quoteMaxProbability, Math.max(quoteMinProbability, centerProbability - halfSpreadProbability));
-      const rawAskProbability = Math.min(quoteMaxProbability, Math.max(quoteMinProbability, centerProbability + halfSpreadProbability));
-      const bidProbability = Math.min(rawBidProbability, Math.max(quoteMinProbability, fairProbability - minEdgeProbability));
-      const askProbability = Math.max(rawAskProbability, Math.min(quoteMaxProbability, fairProbability + minEdgeProbability));
+      const { bidProbability, askProbability } = calculateQuoteProbabilities(position, fairProbability);
 
       return {
         bid: quantileFromDistribution(distribution, bidProbability),
         ask: quantileFromDistribution(distribution, askProbability),
         bidProbability,
         askProbability
+      };
+    }
+
+    function calculateQuoteCentsForPosition(distribution, position) {
+      const boundedPosition = Math.min(1, Math.max(-1, position));
+      const fairCents = calculatePredictionMeanCents(distribution);
+      const fairProbability = cdfProbabilityForCents(distribution, fairCents);
+      const { bidProbability, askProbability } = calculateQuoteProbabilities(boundedPosition, fairProbability);
+
+      return {
+        bid: quantileFromDistribution(distribution, bidProbability),
+        ask: quantileFromDistribution(distribution, askProbability),
+        bidProbability,
+        askProbability
+      };
+    }
+
+    function quantileCentsForState(currentPrice, strikePrice, remainingSigmaBps, probability, model) {
+      if (remainingSigmaBps <= 0.000001) return currentPrice > strikePrice ? 100 : 0;
+      const targetProbability = Math.min(quoteMaxProbability, Math.max(quoteMinProbability, probability));
+      const strikeBps = bpsForPrice(currentPrice, strikePrice);
+      const underlyingQuantile = model.inverseCdf(targetProbability);
+      const binaryZ = strikeBps / remainingSigmaBps - underlyingQuantile;
+      return Math.min(100, Math.max(0, (1 - model.cdf(binaryZ)) * 100));
+    }
+
+    function quantileCentsForStrikeBps(strikeBps, isAboveStrike, remainingSigmaBps, probability, modelKey, model) {
+      if (remainingSigmaBps <= 0.000001) return isAboveStrike ? 100 : 0;
+      const targetProbability = Math.min(quoteMaxProbability, Math.max(quoteMinProbability, probability));
+      const underlyingQuantile = cachedInverseCdf(modelKey, model, targetProbability);
+      const binaryZ = strikeBps / remainingSigmaBps - underlyingQuantile;
+      return Math.min(100, Math.max(0, (1 - model.cdf(binaryZ)) * 100));
+    }
+
+    function calculateQuoteProbabilities(position, fairProbability = 0.5, controls = {}) {
+      const skewQ = controls.skewQ ?? getSkewQ();
+      const spreadQ = controls.spreadQ ?? getSpreadQ();
+      const minEdgeQ = controls.minEdgeQ ?? getMinEdgeQ();
+      const maxEdgeQ = controls.maxEdgeQ ?? getMaxEdgeQ();
+      const effectiveMinEdgeQ = Math.min(minEdgeQ, maxEdgeQ);
+      const boundedPosition = Math.min(1, Math.max(-1, position));
+      const centerProbability = 0.5 - boundedPosition * skewQ;
+      const rawBidProbability = centerProbability - spreadQ;
+      const rawAskProbability = centerProbability + spreadQ;
+      const minBidProbability = Math.max(quoteMinProbability, fairProbability - effectiveMinEdgeQ);
+      const maxBidProbability = Math.max(quoteMinProbability, fairProbability - maxEdgeQ);
+      const minAskProbability = Math.min(quoteMaxProbability, fairProbability + effectiveMinEdgeQ);
+      const maxAskProbability = Math.min(quoteMaxProbability, fairProbability + maxEdgeQ);
+      const bidProbability = Math.max(maxBidProbability, Math.min(rawBidProbability, minBidProbability));
+      const askProbability = Math.min(maxAskProbability, Math.max(rawAskProbability, minAskProbability));
+
+      return {
+        bidProbability: Math.min(quoteMaxProbability, Math.max(quoteMinProbability, bidProbability)),
+        askProbability: Math.min(quoteMaxProbability, Math.max(quoteMinProbability, askProbability))
+      };
+    }
+
+    function calculateQuoteCentsFast(currentPrice, strikePrice, remainingSigmaBps, position, model) {
+      const { bidProbability, askProbability } = calculateQuoteProbabilities(position, 0.5);
+
+      return {
+        bid: quantileCentsForState(currentPrice, strikePrice, remainingSigmaBps, bidProbability, model),
+        ask: quantileCentsForState(currentPrice, strikePrice, remainingSigmaBps, askProbability, model),
+        bidProbability,
+        askProbability
+      };
+    }
+
+    function calculateQuoteCentsFaster(currentPrice, strikePrice, remainingSigmaBps, position, modelKey, model) {
+      const { bidProbability, askProbability } = calculateQuoteProbabilities(position, 0.5);
+
+      return {
+        bid: quantileCentsForStateFast(currentPrice, strikePrice, remainingSigmaBps, bidProbability, modelKey, model),
+        ask: quantileCentsForStateFast(currentPrice, strikePrice, remainingSigmaBps, askProbability, modelKey, model),
+        bidProbability,
+        askProbability
+      };
+    }
+
+    function calculateQuoteCentsForSimulation(strikeBps, isAboveStrike, remainingSigmaBps, position, simulationConfig) {
+      const { bidProbability, askProbability } = calculateQuoteProbabilities(position, 0.5, simulationConfig);
+
+      return {
+        bid: quantileCentsForStrikeBps(strikeBps, isAboveStrike, remainingSigmaBps, bidProbability, simulationConfig.modelKey, simulationConfig.model),
+        ask: quantileCentsForStrikeBps(strikeBps, isAboveStrike, remainingSigmaBps, askProbability, simulationConfig.modelKey, simulationConfig.model)
       };
     }
 
@@ -1034,6 +1586,12 @@
       if (remainingSigmaBps <= 0.000001) return samplePrice > strikePrice ? 100 : 0;
       const strikeDistanceBps = bpsForPrice(samplePrice, strikePrice);
       const model = getDistributionModel();
+      return (1 - model.cdf(strikeDistanceBps / remainingSigmaBps)) * 100;
+    }
+
+    function binaryPriceCentsForModel(samplePrice, strikePrice, remainingSigmaBps, model) {
+      if (remainingSigmaBps <= 0.000001) return samplePrice > strikePrice ? 100 : 0;
+      const strikeDistanceBps = bpsForPrice(samplePrice, strikePrice);
       return (1 - model.cdf(strikeDistanceBps / remainingSigmaBps)) * 100;
     }
 
@@ -1116,6 +1674,466 @@
       };
     }
 
+    function buildOrderbookDistributionForState(currentPrice, strikePrice, predictionSigmaBps, model) {
+      const centsStep = 100 / (orderbookBins - 1);
+      const weights = new Float64Array(orderbookBins);
+      const predictionSigma = Math.max(0.000001, predictionSigmaBps);
+      const strikeBps = bpsForPrice(currentPrice, strikePrice);
+
+      if (predictionSigmaBps <= 0.000001) {
+        return buildPointMassDistribution(binaryPriceCentsForModel(currentPrice, strikePrice, predictionSigmaBps, model), 1);
+      }
+
+      for (let index = 0; index < weights.length; index += 1) {
+        const cents = index * centsStep;
+        const probability = Math.min(1 - 1e-6, Math.max(1e-6, cents / 100));
+        const quantile = model.inverseCdf(1 - probability);
+        const underlyingBps = strikeBps - predictionSigma * quantile;
+        const underlyingDensity = model.pdf(underlyingBps / predictionSigma) / predictionSigma;
+        const slopeCentsPerBps = (100 / predictionSigma) * model.pdf(quantile);
+        weights[index] = (underlyingDensity / Math.max(1e-12, slopeCentsPerBps)) * centsStep;
+      }
+
+      let rawArea = 0;
+      for (let index = 0; index < weights.length; index += 1) rawArea += weights[index];
+      rawArea ||= 1;
+
+      let maxWeight = 0;
+      let area = 0;
+      let weightedTotal = 0;
+      for (let index = 0; index < weights.length; index += 1) {
+        weights[index] /= rawArea;
+        maxWeight = Math.max(maxWeight, weights[index]);
+        area += weights[index];
+        weightedTotal += index * centsStep * weights[index];
+      }
+
+      return {
+        weights,
+        centsStep,
+        maxWeight,
+        area,
+        meanCents: area > 0 ? weightedTotal / area : binaryPriceCentsForModel(currentPrice, strikePrice, predictionSigmaBps, model),
+        zeroMassDensity: weights[0],
+        hundredMassDensity: weights[weights.length - 1]
+      };
+    }
+
+    function randomStandardFromModel(model) {
+      return model.inverseCdf(Math.min(1 - 1e-12, Math.max(1e-12, Math.random())));
+    }
+
+    function randomStandardForSimulation(modelKey, model) {
+      if (modelKey === 'gaussian') return randomNormal();
+      return randomStandardFromModel(model);
+    }
+
+    function samplePoisson(lambda) {
+      if (lambda <= 0) return 0;
+      if (lambda < 30) {
+        const limit = Math.exp(-lambda);
+        let product = 1;
+        let count = 0;
+        do {
+          count += 1;
+          product *= Math.random();
+        } while (product > limit);
+        return count - 1;
+      }
+      const normalApprox = lambda + Math.sqrt(lambda) * inverseNormalCdf(Math.random());
+      return Math.max(0, Math.round(normalApprox));
+    }
+
+    function updateSimulationProgress(fraction) {
+      simulationProgressFill.style.width = `${Math.round(Math.min(1, Math.max(0, fraction)) * 100)}%`;
+    }
+
+    function simulateOnePath(simulationConfig) {
+      const {
+        nSteps,
+        exposureSplits,
+        tradesPerStep,
+        tradeUntilT,
+        strikePrice,
+        model,
+        modelKey,
+        startLogPrice,
+        strikeLogPrice,
+        stepSigmaBps,
+        capByStep,
+        remainingSigmaByStep
+      } = simulationConfig;
+      let logPrice = startLogPrice;
+      let position = 0;
+      let cash = 0;
+
+      for (let stepIndex = 0; stepIndex < nSteps; stepIndex += 1) {
+        logPrice += randomStandardForSimulation(modelKey, model) * stepSigmaBps / 10000;
+        const strikeBps = (strikeLogPrice - logPrice) * 10000;
+        const isAboveStrike = logPrice > strikeLogPrice;
+        const remainingSigmaBps = remainingSigmaByStep[stepIndex];
+        const fairCents = remainingSigmaBps <= 0.000001 ? (isAboveStrike ? 100 : 0) : (1 - model.cdf(strikeBps / remainingSigmaBps)) * 100;
+        const imbalance = calculateTradeImbalance(fairCents, simulationConfig.imbalanceMode, simulationConfig.imbalanceParam);
+        const yesDemandProbability = (imbalance + 1) / 2;
+        const cap = capByStep[stepIndex];
+        const tradeSize = cap / exposureSplits;
+        const timeRemaining = 1 - stepIndex / nSteps;
+        const tradeCount = timeRemaining >= tradeUntilT ? samplePoisson(tradesPerStep) : 0;
+
+        for (let tradeIndex = 0; tradeIndex < tradeCount; tradeIndex += 1) {
+          if (tradeSize <= 0) break;
+          const quote = calculateQuoteCentsForSimulation(strikeBps, isAboveStrike, remainingSigmaBps, position, simulationConfig);
+          if (Math.random() < yesDemandProbability) {
+            const size = Math.min(tradeSize, Math.max(0, position + cap));
+            if (size > 0) {
+              position -= size;
+              cash += quote.ask * size;
+            }
+          } else {
+            const size = Math.min(tradeSize, Math.max(0, cap - position));
+            if (size > 0) {
+              position += size;
+              cash -= quote.bid * size;
+            }
+          }
+        }
+      }
+
+      const settlement = logPrice > strikeLogPrice ? 100 : 0;
+      return cash + position * settlement;
+    }
+
+    function createSimulationWorkers(workerCount = 4) {
+      const workerSource = `
+        let spareNormalRandom = null;
+        const quoteMinProbability = ${quoteMinProbability};
+        const quoteMaxProbability = ${quoteMaxProbability};
+        const imbalanceSensitivityCents = ${imbalanceSensitivityCents};
+        const imbalanceDeadZoneCents = ${imbalanceDeadZoneCents};
+        function normalCdf(value) {
+          const sign = value < 0 ? -1 : 1;
+          const x = Math.abs(value) / Math.sqrt(2);
+          const t = 1 / (1 + 0.3275911 * x);
+          const a1 = 0.254829592;
+          const a2 = -0.284496736;
+          const a3 = 1.421413741;
+          const a4 = -1.453152027;
+          const a5 = 1.061405429;
+          const erf = sign * (1 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x));
+          return 0.5 * (1 + erf);
+        }
+        function inverseNormalCdf(probability) {
+          const p = Math.min(1 - 1e-12, Math.max(1e-12, probability));
+          const a = [-39.69683028665376, 220.9460984245205, -275.9285104469687, 138.357751867269, -30.66479806614716, 2.506628277459239];
+          const b = [-54.47609879822406, 161.5858368580409, -155.6989798598866, 66.80131188771972, -13.28068155288572];
+          const c = [-0.007784894002430293, -0.3223964580411365, -2.400758277161838, -2.549732539343734, 4.374664141464968, 2.938163982698783];
+          const d = [0.007784695709041462, 0.3224671290700398, 2.445134137142996, 3.754408661907416];
+          const lower = 0.02425;
+          const upper = 1 - lower;
+          if (p < lower) {
+            const q = Math.sqrt(-2 * Math.log(p));
+            return (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
+          }
+          if (p > upper) {
+            const q = Math.sqrt(-2 * Math.log(1 - p));
+            return -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
+          }
+          const q = p - 0.5;
+          const r = q * q;
+          return (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1);
+        }
+        function randomNormal() {
+          if (spareNormalRandom !== null) {
+            const value = spareNormalRandom;
+            spareNormalRandom = null;
+            return value;
+          }
+          let first = 0;
+          while (first <= Number.EPSILON) first = Math.random();
+          const second = Math.random();
+          const radius = Math.sqrt(-2 * Math.log(first));
+          const angle = 6.283185307179586 * second;
+          spareNormalRandom = radius * Math.sin(angle);
+          return radius * Math.cos(angle);
+        }
+        function laplaceCdf(value) {
+          return value < 0 ? 0.5 * Math.exp(value) : 1 - 0.5 * Math.exp(-value);
+        }
+        function logisticCdf(value) {
+          return 1 / (1 + Math.exp(-value));
+        }
+        function studentTCdf3(value) {
+          const y = value / Math.sqrt(3);
+          return 0.5 + (Math.atan(y) + y / (1 + y * y)) / Math.PI;
+        }
+        function inverseByBisection(probability, cdf) {
+          const target = Math.min(1 - 1e-12, Math.max(1e-12, probability));
+          let low = -1;
+          let high = 1;
+          while (cdf(low) > target) low *= 2;
+          while (cdf(high) < target) high *= 2;
+          for (let index = 0; index < 42; index += 1) {
+            const mid = (low + high) / 2;
+            if (cdf(mid) < target) low = mid;
+            else high = mid;
+          }
+          return (low + high) / 2;
+        }
+        const models = {
+          gaussian: {
+            cdf: normalCdf,
+            inverseCdf: inverseNormalCdf,
+            random: randomNormal
+          },
+          studentT: {
+            cdf: (value) => studentTCdf3(value * Math.sqrt(3)),
+            inverseCdf: (probability) => inverseByBisection(probability, (value) => studentTCdf3(value * Math.sqrt(3))),
+            random: null
+          },
+          laplacian: {
+            cdf: (value) => laplaceCdf(Math.SQRT2 * value),
+            inverseCdf: (probability) => {
+              const p = Math.min(1 - 1e-12, Math.max(1e-12, probability));
+              const raw = p < 0.5 ? Math.log(2 * p) : -Math.log(2 * (1 - p));
+              return raw / Math.SQRT2;
+            },
+            random: null
+          },
+          logistic: {
+            cdf: (value) => logisticCdf(value / (Math.sqrt(3) / Math.PI)),
+            inverseCdf: (probability) => {
+              const p = Math.min(1 - 1e-12, Math.max(1e-12, probability));
+              return (Math.sqrt(3) / Math.PI) * Math.log(p / (1 - p));
+            },
+            random: null
+          }
+        };
+        function samplePoisson(lambda) {
+          if (lambda <= 0) return 0;
+          if (lambda < 30) {
+            const limit = Math.exp(-lambda);
+            let product = 1;
+            let count = 0;
+            do {
+              count += 1;
+              product *= Math.random();
+            } while (product > limit);
+            return count - 1;
+          }
+          return Math.max(0, Math.round(lambda + Math.sqrt(lambda) * randomNormal()));
+        }
+        function clampUnit(value) {
+          return Math.min(1, Math.max(-1, value));
+        }
+        function getBaseImbalanceMode(mode) {
+          return mode.endsWith('Inverse') ? mode.slice(0, -7) : mode;
+        }
+        function calculateTradeImbalance(evCents, mode, param) {
+          const baseMode = getBaseImbalanceMode(mode);
+          const edgeCents = evCents - 50;
+          const multiplier = Math.max(0.000001, param || 1);
+          let imbalance;
+          if (baseMode === 'linearClamp') imbalance = clampUnit((edgeCents / imbalanceSensitivityCents) * multiplier);
+          else if (baseMode === 'softsign') imbalance = (edgeCents * multiplier) / (Math.abs(edgeCents * multiplier) + imbalanceSensitivityCents);
+          else if (baseMode === 'deadZone') {
+            const magnitude = Math.abs(edgeCents);
+            imbalance = magnitude <= imbalanceDeadZoneCents ? 0 : clampUnit(Math.sign(edgeCents) * ((magnitude - imbalanceDeadZoneCents) / imbalanceSensitivityCents) * multiplier);
+          } else if (baseMode === 'power') {
+            imbalance = Math.sign(edgeCents) * Math.min(1, Math.abs(edgeCents / 50) ** multiplier);
+          } else {
+            imbalance = Math.tanh((edgeCents / imbalanceSensitivityCents) * multiplier);
+          }
+          return mode.endsWith('Inverse') ? -imbalance : imbalance;
+        }
+        const inverseCache = new Map();
+        function cachedInverse(model, probability) {
+          const key = probability.toFixed(6);
+          if (inverseCache.has(key)) return inverseCache.get(key);
+          const value = model.inverseCdf(probability);
+          inverseCache.set(key, value);
+          return value;
+        }
+        function quoteCents(strikeBps, isAboveStrike, remainingSigmaBps, probability, inverseQuantile, model) {
+          if (remainingSigmaBps <= 0.000001) return isAboveStrike ? 100 : 0;
+          const binaryZ = strikeBps / remainingSigmaBps - inverseQuantile;
+          return Math.min(100, Math.max(0, (1 - model.cdf(binaryZ)) * 100));
+        }
+        function simulateOnePath(config, model) {
+          let logPrice = config.startLogPrice;
+          let position = 0;
+          let cash = 0;
+          for (let stepIndex = 0; stepIndex < config.nSteps; stepIndex += 1) {
+            const randomMove = config.modelKey === 'gaussian' ? randomNormal() : model.inverseCdf(Math.random());
+            logPrice += randomMove * config.stepSigmaBpsOver10000;
+            const strikeBps = (config.strikeLogPrice - logPrice) * 10000;
+            const isAboveStrike = logPrice > config.strikeLogPrice;
+            const remainingSigmaBps = config.remainingSigmaByStep[stepIndex];
+            const fairCents = remainingSigmaBps <= 0.000001 ? (isAboveStrike ? 100 : 0) : (1 - model.cdf(strikeBps / remainingSigmaBps)) * 100;
+            const yesDemandProbability = (calculateTradeImbalance(fairCents, config.imbalanceMode, config.imbalanceParam) + 1) / 2;
+            const cap = config.capByStep[stepIndex];
+            const tradeSize = cap / config.exposureSplits;
+            const timeRemaining = 1 - stepIndex / config.nSteps;
+            const tradeCount = timeRemaining >= config.tradeUntilT ? samplePoisson(config.tradesPerStep) : 0;
+            for (let tradeIndex = 0; tradeIndex < tradeCount; tradeIndex += 1) {
+              if (tradeSize <= 0) break;
+              const centerProbability = 0.5 - Math.min(1, Math.max(-1, position)) * config.skewQ;
+              const rawBidProbability = centerProbability - config.spreadQ;
+              const rawAskProbability = centerProbability + config.spreadQ;
+              const effectiveMinEdgeQ = Math.min(config.minEdgeQ, config.maxEdgeQ);
+              const minBidProbability = Math.max(quoteMinProbability, 0.5 - effectiveMinEdgeQ);
+              const maxBidProbability = Math.max(quoteMinProbability, 0.5 - config.maxEdgeQ);
+              const minAskProbability = Math.min(quoteMaxProbability, 0.5 + effectiveMinEdgeQ);
+              const maxAskProbability = Math.min(quoteMaxProbability, 0.5 + config.maxEdgeQ);
+              const bidProbability = Math.min(quoteMaxProbability, Math.max(quoteMinProbability, Math.max(maxBidProbability, Math.min(rawBidProbability, minBidProbability))));
+              const askProbability = Math.min(quoteMaxProbability, Math.max(quoteMinProbability, Math.min(maxAskProbability, Math.max(rawAskProbability, minAskProbability))));
+              const bid = quoteCents(strikeBps, isAboveStrike, remainingSigmaBps, bidProbability, cachedInverse(model, bidProbability), model);
+              const ask = quoteCents(strikeBps, isAboveStrike, remainingSigmaBps, askProbability, cachedInverse(model, askProbability), model);
+              if (Math.random() < yesDemandProbability) {
+                const size = Math.min(tradeSize, Math.max(0, position + cap));
+                if (size > 0) {
+                  position -= size;
+                  cash += ask * size;
+                }
+              } else {
+                const size = Math.min(tradeSize, Math.max(0, cap - position));
+                if (size > 0) {
+                  position += size;
+                  cash -= bid * size;
+                }
+              }
+            }
+          }
+          const settlement = logPrice > config.strikeLogPrice ? 100 : 0;
+          return cash + position * settlement;
+        }
+        self.onmessage = (event) => {
+          const config = event.data;
+          const model = models[config.modelKey] || models.gaussian;
+          const pnls = new Float64Array(config.nPaths);
+          const progressInterval = Math.max(500, Math.floor(config.nPaths / 20));
+          for (let pathIndex = 0; pathIndex < config.nPaths; pathIndex += 1) {
+            pnls[pathIndex] = simulateOnePath(config, model);
+            if ((pathIndex + 1) % progressInterval === 0) self.postMessage({ type: 'progress', value: (pathIndex + 1) / config.nPaths });
+          }
+          let total = 0;
+          for (let index = 0; index < pnls.length; index += 1) total += pnls[index];
+          self.postMessage({ type: 'done', mean: total / Math.max(1, pnls.length), buffer: pnls.buffer }, [pnls.buffer]);
+        };
+      `;
+      if (!chartState.simulationWorkerUrl) {
+        const blob = new Blob([workerSource], { type: 'application/javascript' });
+        chartState.simulationWorkerUrl = URL.createObjectURL(blob);
+      }
+      chartState.simulationWorkers.forEach((worker) => worker.terminate());
+      chartState.simulationWorkers = Array.from({ length: workerCount }, () => new Worker(chartState.simulationWorkerUrl));
+      return chartState.simulationWorkers;
+    }
+
+    function buildSimulationWorkerConfig() {
+      const nPaths = getNPaths();
+      const nSteps = getNSteps();
+      const totalSigmaBps = getTotalSigmaBps();
+      const inverseStepScale = 1 / nSteps;
+      const capByStep = new Float64Array(nSteps);
+      const remainingSigmaByStep = new Float64Array(nSteps);
+      for (let stepIndex = 0; stepIndex < nSteps; stepIndex += 1) {
+        capByStep[stepIndex] = exposureCapAt(1 - stepIndex * inverseStepScale);
+        remainingSigmaByStep[stepIndex] = totalSigmaBps * Math.sqrt(Math.max(0, 1 - (stepIndex + 1) * inverseStepScale));
+      }
+      return {
+        nPaths,
+        nSteps,
+        exposureSplits: getExposureSplits(),
+        tradesPerStep: getTradesPerStep(),
+        tradeUntilT: getTradeUntilT(),
+        modelKey: priceDistributionSelect.value,
+        imbalanceMode: imbalanceModeSelect.value,
+        imbalanceParam: getImbalanceParam(),
+        startLogPrice: Math.log(Math.max(0.000001, getStartPrice())),
+        strikeLogPrice: Math.log(Math.max(0.000001, getStrikePrice())),
+        skewQ: getSkewQ(),
+        spreadQ: getSpreadQ(),
+        minEdgeQ: getMinEdgeQ(),
+        maxEdgeQ: getMaxEdgeQ(),
+        stepSigmaBpsOver10000: (totalSigmaBps * Math.sqrt(1 / nSteps)) / 10000,
+        capByStep,
+        remainingSigmaByStep
+      };
+    }
+
+    async function runMinimalSimulation() {
+      if (chartState.simulationRunning) return;
+      chartState.simulationRunning = true;
+      runSimulationButton.disabled = true;
+      runSimulationButton.textContent = 'Running';
+      updateSimulationProgress(0);
+      const config = buildSimulationWorkerConfig();
+      const workerCount = Math.min(4, config.nPaths);
+      const workers = createSimulationWorkers(workerCount);
+      const basePaths = Math.floor(config.nPaths / workerCount);
+      const remainder = config.nPaths % workerCount;
+      const completedByWorker = new Array(workerCount).fill(0);
+      const pathCounts = workers.map((_, index) => basePaths + (index < remainder ? 1 : 0));
+      const resultBuffers = new Array(workerCount);
+      let finishedWorkers = 0;
+      let hasErrored = false;
+
+      const finishRun = () => {
+        const pnls = [];
+        let total = 0;
+        resultBuffers.forEach((buffer) => {
+          const values = new Float64Array(buffer);
+          for (let index = 0; index < values.length; index += 1) {
+            const pnl = values[index];
+            pnls.push(pnl);
+            total += pnl;
+          }
+        });
+        chartState.simulationPnls = pnls;
+        chartState.simulationMean = total / Math.max(1, pnls.length);
+        chartState.pnlRenderCache = null;
+        drawPnlChart();
+        updateSimulationProgress(1);
+        runSimulationButton.disabled = false;
+        runSimulationButton.textContent = 'Run';
+        chartState.simulationRunning = false;
+        workers.forEach((worker) => worker.terminate());
+        chartState.simulationWorkers = [];
+      };
+
+      const failRun = () => {
+        if (hasErrored) return;
+        hasErrored = true;
+        runSimulationButton.disabled = false;
+        runSimulationButton.textContent = 'Run';
+        chartState.simulationRunning = false;
+        workers.forEach((worker) => worker.terminate());
+        chartState.simulationWorkers = [];
+      };
+
+      workers.forEach((worker, workerIndex) => {
+        worker.onmessage = (event) => {
+          const message = event.data;
+          if (message.type === 'progress') {
+            completedByWorker[workerIndex] = message.value * pathCounts[workerIndex];
+            const completedPaths = completedByWorker.reduce((total, count) => total + count, 0);
+            updateSimulationProgress(completedPaths / config.nPaths);
+            return;
+          }
+          if (message.type === 'done') {
+            completedByWorker[workerIndex] = pathCounts[workerIndex];
+            resultBuffers[workerIndex] = message.buffer;
+            finishedWorkers += 1;
+            const completedPaths = completedByWorker.reduce((total, count) => total + count, 0);
+            updateSimulationProgress(completedPaths / config.nPaths);
+            if (finishedWorkers === workerCount) finishRun();
+          }
+        };
+        worker.onerror = failRun;
+        worker.postMessage({ ...config, nPaths: pathCounts[workerIndex], workerIndex });
+      });
+    }
+
     function requestDrawDistribution() {
       if (drawFrameId) return;
       drawFrameId = requestAnimationFrame(() => {
@@ -1138,6 +2156,84 @@
       return `${rounded.toFixed(2)}%`;
     }
 
+    function formatMetricValue(value) {
+      if (!Number.isFinite(value)) return '--';
+      return value.toFixed(2);
+    }
+
+    function quantileFromSorted(sortedValues, probability) {
+      if (!sortedValues.length) return NaN;
+      const index = Math.min(sortedValues.length - 1, Math.max(0, Math.ceil(probability * sortedValues.length) - 1));
+      return sortedValues[index];
+    }
+
+    function cvarFromSorted(sortedValues, probability) {
+      if (!sortedValues.length) return NaN;
+      const cutoffIndex = Math.max(1, Math.ceil(probability * sortedValues.length));
+      let total = 0;
+      for (let index = 0; index < cutoffIndex; index += 1) total += sortedValues[index];
+      return total / cutoffIndex;
+    }
+
+    function calculatePnlMetrics(pnls, mean) {
+      if (!pnls.length) return null;
+      const sortedPnls = [...pnls].sort((first, second) => first - second);
+      const wins = pnls.filter((pnl) => pnl > 0).length;
+      const losses = pnls.filter((pnl) => pnl < 0).length;
+      const variance = pnls.reduce((total, pnl) => total + (pnl - mean) ** 2, 0) / Math.max(1, pnls.length - 1);
+      const stdev = Math.sqrt(variance);
+      const drawdowns = pnls.map((pnl) => Math.max(0, -pnl)).sort((first, second) => first - second);
+      return {
+        winRate: wins / pnls.length,
+        lossRate: losses / pnls.length,
+        cvar5: cvarFromSorted(sortedPnls, 0.05),
+        cvar1: cvarFromSorted(sortedPnls, 0.01),
+        sharpe: stdev > 0 ? mean / stdev : NaN,
+        p95Drawdown: quantileFromSorted(drawdowns, 0.95)
+      };
+    }
+
+    function updatePnlMetricsTable(metrics) {
+      if (!metrics) {
+        pnlWinRate.textContent = '--';
+        pnlLossRate.textContent = '--';
+        pnlCvar5.textContent = '--';
+        pnlCvar1.textContent = '--';
+        pnlSharpe.textContent = '--';
+        pnlP95Drawdown.textContent = '--';
+        return;
+      }
+      pnlWinRate.textContent = formatPercent(metrics.winRate * 100);
+      pnlLossRate.textContent = formatPercent(metrics.lossRate * 100);
+      pnlCvar5.textContent = formatMetricValue(metrics.cvar5);
+      pnlCvar1.textContent = formatMetricValue(metrics.cvar1);
+      pnlSharpe.textContent = formatMetricValue(metrics.sharpe);
+      pnlP95Drawdown.textContent = formatMetricValue(metrics.p95Drawdown);
+    }
+
+    function buildPnlRenderCache(pnls, mean) {
+      const minPnl = Math.min(...pnls);
+      const maxPnl = Math.max(...pnls);
+      const range = Math.max(0.000001, maxPnl - minPnl);
+      const lower = minPnl - range * 0.08;
+      const upper = maxPnl + range * 0.08;
+      const histogramBins = 41;
+      const bins = new Array(histogramBins).fill(0);
+      pnls.forEach((pnl) => {
+        const index = Math.min(histogramBins - 1, Math.max(0, Math.floor(((pnl - lower) / (upper - lower)) * histogramBins)));
+        bins[index] += 1;
+      });
+      return {
+        mean,
+        lower,
+        upper,
+        histogramBins,
+        bins,
+        maxBin: Math.max(1, ...bins),
+        metrics: calculatePnlMetrics(pnls, mean)
+      };
+    }
+
     function updateSideButtons() {
       longButton.classList.toggle('is-long-active', chartState.side === 'long');
       shortButton.classList.toggle('is-short-active', chartState.side === 'short');
@@ -1156,11 +2252,103 @@
       skewQValue.textContent = getSkewQ().toFixed(2);
       spreadQValue.textContent = getSpreadQ().toFixed(2);
       minEdgeQValue.textContent = getMinEdgeQ().toFixed(3);
+      maxEdgeQValue.textContent = getMaxEdgeQ().toFixed(3);
+    }
+
+    function updateSimulationControlValues() {
+      nPathsValue.textContent = nPathsSlider.value;
+      nStepsValue.textContent = nStepsSlider.value;
+      exposureSplitsValue.textContent = exposureSplitsSlider.value;
+      tradesPerStepValue.textContent = Number(tradesPerStepSlider.value).toFixed(2);
     }
 
     function handleQuoteControlInput() {
       updateQuoteControlValues();
       requestDrawDistribution();
+    }
+
+    function handleSimulationControlInput() {
+      updateSimulationControlValues();
+    }
+
+    function decimalPlaces(value) {
+      const text = String(value);
+      if (text.includes('e-')) return Number(text.split('e-')[1]);
+      const decimal = text.split('.')[1];
+      return decimal ? decimal.length : 0;
+    }
+
+    function clampSliderValue(slider, rawValue) {
+      const numericValue = Number(rawValue);
+      if (!Number.isFinite(numericValue)) return null;
+      const min = Number(slider.min);
+      const max = Number(slider.max);
+      const step = slider.step === 'any' ? 0 : Number(slider.step || 0);
+      let nextValue = Math.min(max, Math.max(min, numericValue));
+      if (step > 0) {
+        const steps = Math.round((nextValue - min) / step);
+        nextValue = min + steps * step;
+        nextValue = Math.min(max, Math.max(min, nextValue));
+        return nextValue.toFixed(decimalPlaces(step));
+      }
+      return String(nextValue);
+    }
+
+    function makeSliderValueEditable(label) {
+      if (label.hidden) return;
+      const slider = document.getElementById(label.dataset.sliderId);
+      if (!slider) return;
+      label.addEventListener('click', () => startSliderValueEdit(label, slider));
+      label.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          startSliderValueEdit(label, slider);
+        }
+      });
+    }
+
+    function startSliderValueEdit(label, slider) {
+      if (label.classList.contains('is-editing')) return;
+      const previousText = label.textContent;
+      label.classList.add('is-editing');
+      label.contentEditable = 'true';
+      label.textContent = slider.value;
+      label.focus();
+      const selection = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(label);
+      selection.removeAllRanges();
+      selection.addRange(range);
+
+      const finish = (shouldCommit) => {
+        label.removeEventListener('blur', handleBlur);
+        label.removeEventListener('keydown', handleKeyDown);
+        label.contentEditable = 'false';
+        label.classList.remove('is-editing');
+        if (shouldCommit) {
+          const nextValue = clampSliderValue(slider, label.textContent.trim());
+          if (nextValue !== null) {
+            slider.value = nextValue;
+            slider.dispatchEvent(new Event('input', { bubbles: true }));
+            return;
+          }
+        }
+        label.textContent = previousText;
+      };
+
+      const handleBlur = () => finish(true);
+      const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          finish(true);
+        } else if (event.key === 'Escape') {
+          event.preventDefault();
+          finish(false);
+        }
+      };
+
+      label.addEventListener('blur', handleBlur);
+      label.addEventListener('keydown', handleKeyDown);
     }
 
     function prepareCanvas(targetCanvas, targetContext) {
@@ -1174,6 +2362,55 @@
       }
       targetContext.setTransform(ratio, 0, 0, ratio, 0, 0);
       return { width: rect.width, height: rect.height };
+    }
+
+    function isInsidePlot(point, geometry) {
+      return point && geometry &&
+        point.x >= geometry.padding.left && point.x <= geometry.padding.left + geometry.plotWidth &&
+        point.y >= geometry.padding.top && point.y <= geometry.padding.top + geometry.plotHeight;
+    }
+
+    function drawLabelBox(targetContext, text, x, y, align = 'center') {
+      targetContext.save();
+      targetContext.font = '11px Inter, system-ui, sans-serif';
+      const paddingX = 5;
+      const paddingY = 3;
+      const width = targetContext.measureText(text).width + paddingX * 2;
+      const height = 17;
+      let left = align === 'right' ? x - width : align === 'left' ? x : x - width / 2;
+      const top = y - height / 2;
+      targetContext.fillStyle = 'rgba(11, 17, 26, 0.94)';
+      targetContext.strokeStyle = '#5b6472';
+      targetContext.lineWidth = 1;
+      targetContext.fillRect(left, top, width, height);
+      targetContext.strokeRect(left, top, width, height);
+      targetContext.fillStyle = '#d6deeb';
+      targetContext.textAlign = 'center';
+      targetContext.textBaseline = 'middle';
+      targetContext.fillText(text, left + width / 2, top + height / 2 + 0.5);
+      targetContext.restore();
+    }
+
+    function drawCrosshair(targetCanvas, targetContext, geometry, labels) {
+      if (!chartState.crosshair || chartState.crosshair.canvas !== targetCanvas || !isInsidePlot(chartState.crosshair, geometry)) return;
+      const x = chartState.crosshair.x;
+      const y = chartState.crosshair.y;
+      targetContext.save();
+      targetContext.strokeStyle = 'rgba(166, 176, 191, 0.72)';
+      targetContext.lineWidth = 1;
+      targetContext.setLineDash([4, 4]);
+      targetContext.beginPath();
+      targetContext.moveTo(geometry.padding.left, y);
+      targetContext.lineTo(geometry.padding.left + geometry.plotWidth, y);
+      targetContext.moveTo(x, geometry.padding.top);
+      targetContext.lineTo(x, geometry.padding.top + geometry.plotHeight);
+      targetContext.stroke();
+      targetContext.setLineDash([]);
+      if (labels?.xTop) drawLabelBox(targetContext, labels.xTop, x, geometry.padding.top - 14);
+      if (labels?.x) drawLabelBox(targetContext, labels.x, x, geometry.padding.top + geometry.plotHeight + 14);
+      if (labels?.y) drawLabelBox(targetContext, labels.y, geometry.padding.left - 8, y, 'right');
+      if (labels?.yRight) drawLabelBox(targetContext, labels.yRight, geometry.padding.left + geometry.plotWidth + 8, y, 'left');
+      targetContext.restore();
     }
 
     function drawDistribution() {
@@ -1226,6 +2463,15 @@
       drawCenterLine(padding, plotWidth, yForPrice, startPrice, lowerPrice, upperPrice);
       drawSigmaMarkers(padding, plotWidth, yForPrice, startPrice, sigmaBps, lowerPrice, upperPrice);
       drawPriceLines(padding, plotWidth, yForPrice, startPrice, strikePrice, lowerPrice, upperPrice);
+      if (chartState.crosshair?.canvas === canvas) {
+        const price = priceFromCanvasY(chartState.crosshair.y);
+        const bps = bpsForPrice(startPrice, price);
+        drawCrosshair(canvas, context, chartState.lastGeometry, {
+          x: `${densityAt(bpsForPrice(startPrice, price), sigmaBps, model).toExponential(2)}`,
+          y: `${formatBps(bps)} bps`,
+          yRight: formatNumber(price)
+        });
+      }
 
       if (startPriceDisplay) startPriceDisplay.textContent = formatNumber(startPrice);
       if (plotSigmaDisplay) plotSigmaDisplay.textContent = `${sigmaBps.toFixed(1)} bps`;
@@ -1243,6 +2489,7 @@
       const strikePrice = getStrikePrice();
       const fairCents = calculatePredictionMeanCents(orderbookDistribution);
       const selectedT = getT();
+      const tradeUntilT = getTradeUntilT();
       const strikeCents = 50;
       const yFor = (cents) => padding.top + ((100 - cents) / 100) * plotHeight;
       const axisX = padding.left + plotWidth / 2;
@@ -1279,12 +2526,28 @@
       strikeContext.fill();
       strikeContext.textAlign = 'right';
       strikeContext.fillText(`T ${selectedT.toFixed(2)}`, padding.left - 10, tAxisY);
+      const tradeUntilX = xForT(tradeUntilT);
+      strikeContext.strokeStyle = '#ffcc66';
+      strikeContext.fillStyle = '#ffdd88';
+      strikeContext.lineWidth = 2;
+      strikeContext.beginPath();
+      strikeContext.moveTo(tradeUntilX - 6, tAxisY + 9);
+      strikeContext.lineTo(tradeUntilX, tAxisY - 9);
+      strikeContext.lineTo(tradeUntilX + 6, tAxisY + 9);
+      strikeContext.closePath();
+      strikeContext.stroke();
+      strikeContext.fill();
+      strikeContext.textAlign = 'left';
+      strikeContext.textBaseline = 'middle';
+      strikeContext.fillText(`trade until ${tradeUntilT.toFixed(2)}`, tradeUntilX + 10, tAxisY);
       chartState.strikeGeometry = {
         tAxisY,
         tLeft: padding.left,
         tRight: padding.left + plotWidth,
         tTop: tAxisY - 24,
         tBottom: tAxisY + 32,
+        tradeUntilX,
+        tradeUntilHandleRadius: 12,
         vwapTop: 0,
         vwapBottom: 0,
         vwapHandleX: 0,
@@ -1292,6 +2555,9 @@
         vwapHandleRadius: 12,
         centsTop: padding.top,
         centsBottom: padding.top + plotHeight,
+        padding,
+        plotWidth,
+        plotHeight,
         yFor
       };
 
@@ -1397,6 +2663,17 @@
       strikeContext.rotate(-Math.PI / 2);
       strikeContext.fillText('orderbook, cents', 0, 0);
       strikeContext.restore();
+      if (chartState.crosshair?.canvas === strikeCanvas) {
+        const point = chartState.crosshair;
+        const cents = 100 - ((point.y - padding.top) / plotHeight) * 100;
+        const density = orderbookDistribution ? Math.max(0, (point.x - padding.left) / Math.max(1, plotWidth)) * (orderbookDistribution.maxWeight || 1) : 0;
+        const timeRemaining = 1 - (point.x - padding.left) / plotWidth;
+        drawCrosshair(strikeCanvas, strikeContext, chartState.strikeGeometry, {
+          x: `${(density * 100).toFixed(2)}%`,
+          xTop: `T ${Math.min(1, Math.max(0, timeRemaining)).toFixed(2)}`,
+          y: `${Math.min(100, Math.max(0, cents)).toFixed(2)}c`
+        });
+      }
       if (strikePriceDisplay) strikePriceDisplay.textContent = `${formatNumber(strikePrice)} @ 50c`;
       if (fairPriceDisplay) fairPriceDisplay.textContent = `${fairCents.toFixed(2)} cents`;
       if (orderbookAreaDisplay) orderbookAreaDisplay.textContent = orderbookDistribution ? orderbookDistribution.area.toFixed(3) : '1.000';
@@ -1407,6 +2684,368 @@
         edgeDisplay.classList.toggle('is-negative', edgePercent < 0);
       }
       tValue.textContent = selectedT.toFixed(2);
+      drawImbalanceChart(fairCents);
+      drawExposureChart();
+      drawPnlChart();
+    }
+
+    function drawImbalanceChart(fairCents) {
+      const { width, height } = prepareCanvas(imbalanceCanvas, imbalanceContext);
+      const padding = { top: 58, right: 24, bottom: 44, left: 58 };
+      const plotWidth = width - padding.left - padding.right;
+      const plotHeight = height - padding.top - padding.bottom;
+      const imbalanceMode = imbalanceModeSelect.value;
+      const xFor = (imbalance) => padding.left + ((imbalance + 1) / 2) * plotWidth;
+      const yFor = (evCents) => padding.top + ((100 - evCents) / 100) * plotHeight;
+      const paramMin = Number(imbalanceParamSlider.min);
+      const paramMax = Number(imbalanceParamSlider.max);
+      const imbalanceParam = getImbalanceParam();
+      const parameterName = imbalanceMode === 'power' ? 'power' : 'multiplier';
+      const paramX = padding.left + ((imbalanceParam - paramMin) / (paramMax - paramMin)) * plotWidth;
+      const imbalanceFor = (evCents) => calculateTradeImbalance(evCents, imbalanceMode, imbalanceParam);
+      chartState.imbalanceGeometry = { padding, plotWidth, plotHeight, paramMin, paramMax };
+      imbalanceLegendLabel.textContent = imbalanceModeLabels[imbalanceMode] || imbalanceModeLabels.tanh;
+
+      imbalanceContext.clearRect(0, 0, width, height);
+      imbalanceContext.fillStyle = '#0c121b';
+      imbalanceContext.fillRect(0, 0, width, height);
+
+      imbalanceContext.save();
+      imbalanceContext.strokeStyle = '#1d2838';
+      imbalanceContext.lineWidth = 1;
+      imbalanceContext.fillStyle = '#8d9bb0';
+      imbalanceContext.font = '12px Inter, system-ui, sans-serif';
+      imbalanceContext.textBaseline = 'middle';
+
+      [paramMin, (paramMin + paramMax) / 2, paramMax].forEach((value) => {
+        const x = padding.left + ((value - paramMin) / (paramMax - paramMin)) * plotWidth;
+        imbalanceContext.beginPath();
+        imbalanceContext.moveTo(x, padding.top - 8);
+        imbalanceContext.lineTo(x, padding.top);
+        imbalanceContext.stroke();
+        imbalanceContext.textAlign = 'center';
+        imbalanceContext.textBaseline = 'bottom';
+        imbalanceContext.fillText(value.toFixed(value === Math.round(value) ? 0 : 2), x, padding.top - 10);
+      });
+
+      imbalanceContext.strokeStyle = '#263244';
+      imbalanceContext.lineWidth = 1;
+      imbalanceContext.beginPath();
+      imbalanceContext.moveTo(padding.left, padding.top - 8);
+      imbalanceContext.lineTo(padding.left + plotWidth, padding.top - 8);
+      imbalanceContext.stroke();
+      imbalanceContext.fillStyle = '#c9d6e7';
+      imbalanceContext.textAlign = 'center';
+      imbalanceContext.textBaseline = 'bottom';
+      imbalanceContext.fillText(parameterName, padding.left + plotWidth / 2, padding.top - 24);
+      imbalanceContext.fillStyle = '#42a5ff';
+      imbalanceContext.beginPath();
+      imbalanceContext.rect(paramX - 5, padding.top - 13, 10, 10);
+      imbalanceContext.fill();
+      imbalanceContext.strokeStyle = '#8fd0ff';
+      imbalanceContext.strokeRect(paramX - 5, padding.top - 13, 10, 10);
+
+      imbalanceContext.strokeStyle = '#1d2838';
+      imbalanceContext.lineWidth = 1;
+      imbalanceContext.fillStyle = '#8d9bb0';
+
+      [-1, -0.5, 0, 0.5, 1].forEach((imbalance) => {
+        const x = xFor(imbalance);
+        imbalanceContext.beginPath();
+        imbalanceContext.moveTo(x, padding.top);
+        imbalanceContext.lineTo(x, padding.top + plotHeight);
+        imbalanceContext.stroke();
+        imbalanceContext.textAlign = 'center';
+        imbalanceContext.textBaseline = 'top';
+        imbalanceContext.fillText(imbalance.toFixed(1).replace('.0', ''), x, padding.top + plotHeight + 8);
+      });
+
+      [0, 25, 50, 75, 100].forEach((evCents) => {
+        const y = yFor(evCents);
+        imbalanceContext.beginPath();
+        imbalanceContext.moveTo(padding.left, y);
+        imbalanceContext.lineTo(padding.left + plotWidth, y);
+        imbalanceContext.stroke();
+        imbalanceContext.textAlign = 'right';
+        imbalanceContext.textBaseline = 'middle';
+        imbalanceContext.fillText(String(evCents), padding.left - 8, y);
+      });
+
+      imbalanceContext.strokeStyle = '#344258';
+      imbalanceContext.lineWidth = 2;
+      imbalanceContext.beginPath();
+      imbalanceContext.moveTo(padding.left, padding.top);
+      imbalanceContext.lineTo(padding.left, padding.top + plotHeight);
+      imbalanceContext.lineTo(padding.left + plotWidth, padding.top + plotHeight);
+      imbalanceContext.stroke();
+
+      imbalanceContext.beginPath();
+      for (let evCents = 0; evCents <= 100; evCents += 1) {
+        const x = xFor(imbalanceFor(evCents));
+        const y = yFor(evCents);
+        if (evCents === 0) imbalanceContext.moveTo(x, y);
+        else imbalanceContext.lineTo(x, y);
+      }
+      imbalanceContext.strokeStyle = '#42a5ff';
+      imbalanceContext.lineWidth = 3;
+      imbalanceContext.stroke();
+
+      const fairY = yFor(fairCents);
+      imbalanceContext.strokeStyle = '#35c98f';
+      imbalanceContext.lineWidth = 2;
+      imbalanceContext.beginPath();
+      imbalanceContext.moveTo(padding.left, fairY);
+      imbalanceContext.lineTo(padding.left + plotWidth, fairY);
+      imbalanceContext.stroke();
+      imbalanceContext.fillStyle = '#77e7ba';
+      imbalanceContext.textAlign = 'right';
+      imbalanceContext.textBaseline = 'bottom';
+      imbalanceContext.fillText(`fair ${fairCents.toFixed(2)}c`, padding.left + plotWidth - 8, fairY - 6);
+
+      imbalanceContext.fillStyle = '#c9d6e7';
+      imbalanceContext.textAlign = 'center';
+      imbalanceContext.textBaseline = 'top';
+      imbalanceContext.fillText('imbalance', padding.left + plotWidth / 2, height - 18);
+
+      imbalanceContext.translate(14, padding.top + plotHeight / 2);
+      imbalanceContext.rotate(-Math.PI / 2);
+      imbalanceContext.textBaseline = 'middle';
+      imbalanceContext.fillText('EV cents', 0, 0);
+      imbalanceContext.restore();
+      if (chartState.crosshair?.canvas === imbalanceCanvas) {
+        const point = chartState.crosshair;
+        const imbalance = ((point.x - padding.left) / plotWidth) * 2 - 1;
+        const evCents = 100 - ((point.y - padding.top) / plotHeight) * 100;
+        const paramValue = paramMin + Math.min(1, Math.max(0, (point.x - padding.left) / plotWidth)) * (paramMax - paramMin);
+        drawCrosshair(imbalanceCanvas, imbalanceContext, chartState.imbalanceGeometry, {
+          xTop: `${parameterName} ${paramValue.toFixed(2)}`,
+          x: Math.min(1, Math.max(-1, imbalance)).toFixed(2),
+          y: `${Math.min(100, Math.max(0, evCents)).toFixed(2)}c`
+        });
+      }
+    }
+
+    function exposureCapAt(timeRemaining) {
+      if (exposureFormulaSelect.value === 'constant') return 1;
+      if (exposureFormulaSelect.value === 'sqrtT') return Math.sqrt(Math.max(0, timeRemaining));
+      return Math.sqrt(Math.max(0, timeRemaining));
+    }
+
+    function drawExposureChart() {
+      const { width, height } = prepareCanvas(exposureCanvas, exposureContext);
+      const padding = { top: 28, right: 18, bottom: 48, left: 42 };
+      const plotWidth = width - padding.left - padding.right;
+      const plotHeight = height - padding.top - padding.bottom;
+      const currentT = 1;
+      const xFor = (timeRemaining) => {
+        return padding.left + (1 - timeRemaining) * plotWidth;
+      };
+      const yFor = (exposure) => padding.top + ((1 - exposure) / 2) * plotHeight;
+      chartState.exposureGeometry = { padding, plotWidth, plotHeight };
+
+      exposureContext.clearRect(0, 0, width, height);
+      exposureContext.fillStyle = '#0c121b';
+      exposureContext.fillRect(0, 0, width, height);
+
+      exposureContext.save();
+      exposureContext.strokeStyle = '#1d2838';
+      exposureContext.lineWidth = 1;
+      exposureContext.fillStyle = '#8d9bb0';
+      exposureContext.font = '12px Inter, system-ui, sans-serif';
+      exposureContext.textBaseline = 'middle';
+
+      for (let exposure = -1; exposure <= 1.0001; exposure += 0.5) {
+        const y = yFor(exposure);
+        exposureContext.beginPath();
+        exposureContext.moveTo(padding.left, y);
+        exposureContext.lineTo(padding.left + plotWidth, y);
+        exposureContext.stroke();
+        exposureContext.textAlign = 'right';
+        exposureContext.fillText(exposure.toFixed(1).replace('.0', ''), padding.left - 8, y);
+      }
+
+      const timeTicks = currentT > 0 ? [currentT, currentT * 0.75, currentT * 0.5, currentT * 0.25, 0] : [0];
+      exposureContext.textAlign = 'center';
+      exposureContext.textBaseline = 'top';
+      timeTicks.forEach((timeRemaining) => {
+        const x = xFor(timeRemaining);
+        exposureContext.beginPath();
+        exposureContext.moveTo(x, padding.top);
+        exposureContext.lineTo(x, padding.top + plotHeight);
+        exposureContext.stroke();
+        exposureContext.fillText(timeRemaining.toFixed(2).replace(/\.00$/, ''), x, padding.top + plotHeight + 8);
+      });
+
+      exposureContext.strokeStyle = '#344258';
+      exposureContext.lineWidth = 2;
+      exposureContext.beginPath();
+      exposureContext.moveTo(padding.left, padding.top);
+      exposureContext.lineTo(padding.left, padding.top + plotHeight);
+      exposureContext.lineTo(padding.left + plotWidth, padding.top + plotHeight);
+      exposureContext.stroke();
+
+      const steps = 160;
+      const drawCap = (sign, color) => {
+        exposureContext.beginPath();
+        for (let index = 0; index <= steps; index += 1) {
+          const progress = index / steps;
+          const timeRemaining = currentT * (1 - progress);
+          const exposure = sign * exposureCapAt(timeRemaining);
+          const x = xFor(timeRemaining);
+          const y = yFor(exposure);
+          if (index === 0) exposureContext.moveTo(x, y);
+          else exposureContext.lineTo(x, y);
+        }
+        exposureContext.strokeStyle = color;
+        exposureContext.lineWidth = 3;
+        exposureContext.stroke();
+      };
+
+      drawCap(1, '#35c98f');
+      drawCap(-1, '#ff6b73');
+
+      exposureContext.fillStyle = '#c9d6e7';
+      exposureContext.textAlign = 'center';
+      exposureContext.textBaseline = 'top';
+      exposureContext.fillText('time remaining', padding.left + plotWidth / 2, height - 18);
+
+      exposureContext.translate(14, padding.top + plotHeight / 2);
+      exposureContext.rotate(-Math.PI / 2);
+      exposureContext.textBaseline = 'middle';
+      exposureContext.fillText('exposure cap', 0, 0);
+      exposureContext.restore();
+      if (chartState.crosshair?.canvas === exposureCanvas) {
+        const point = chartState.crosshair;
+        const timeRemaining = 1 - (point.x - padding.left) / plotWidth;
+        const exposure = 1 - ((point.y - padding.top) / plotHeight) * 2;
+        drawCrosshair(exposureCanvas, exposureContext, chartState.exposureGeometry, {
+          x: `T ${Math.min(1, Math.max(0, timeRemaining)).toFixed(2)}`,
+          y: Math.min(1, Math.max(-1, exposure)).toFixed(2)
+        });
+      }
+    }
+
+    function drawPnlChart() {
+      const { width, height } = prepareCanvas(pnlCanvas, pnlContext);
+      const padding = { top: 18, right: 18, bottom: 38, left: 48 };
+      const plotWidth = width - padding.left - padding.right;
+      const plotHeight = height - padding.top - padding.bottom;
+      const pnls = chartState.simulationPnls || [];
+      chartState.pnlGeometry = { padding, plotWidth, plotHeight, lower: null, upper: null, maxBin: null };
+
+      pnlContext.clearRect(0, 0, width, height);
+      pnlContext.fillStyle = '#0c121b';
+      pnlContext.fillRect(0, 0, width, height);
+
+      pnlContext.save();
+      pnlContext.font = '12px Inter, system-ui, sans-serif';
+      pnlContext.fillStyle = '#8d9bb0';
+      pnlContext.strokeStyle = '#1d2838';
+      pnlContext.lineWidth = 1;
+
+      if (!pnls.length) {
+        pnlMeanDisplay.textContent = 'mean --';
+        chartState.pnlRenderCache = null;
+        updatePnlMetricsTable(null);
+        pnlContext.textAlign = 'center';
+        pnlContext.textBaseline = 'middle';
+        pnlContext.fillText('run simulation', padding.left + plotWidth / 2, padding.top + plotHeight / 2);
+        pnlContext.restore();
+        if (chartState.crosshair?.canvas === pnlCanvas) {
+          drawCrosshair(pnlCanvas, pnlContext, chartState.pnlGeometry, {
+            x: '0 paths',
+            y: 'PnL --'
+          });
+        }
+        return;
+      }
+
+      const mean = chartState.simulationMean ?? pnls.reduce((total, pnl) => total + pnl, 0) / pnls.length;
+      if (!chartState.pnlRenderCache || chartState.pnlRenderCache.source !== pnls) {
+        chartState.pnlRenderCache = { source: pnls, ...buildPnlRenderCache(pnls, mean) };
+      }
+      const { lower, upper, histogramBins, bins, maxBin, metrics } = chartState.pnlRenderCache;
+      updatePnlMetricsTable(metrics);
+      const yFor = (pnl) => padding.top + ((upper - pnl) / (upper - lower)) * plotHeight;
+      const xForCount = (count) => padding.left + (count / maxBin) * plotWidth;
+      chartState.pnlGeometry = { padding, plotWidth, plotHeight, lower, upper, maxBin };
+
+      const ticks = [lower, mean, upper];
+      if (lower < 0 && upper > 0 && !ticks.some((tick) => Math.abs(tick) < 0.000001)) ticks.push(0);
+      ticks.forEach((tick) => {
+        const y = yFor(tick);
+        pnlContext.beginPath();
+        pnlContext.moveTo(padding.left, y);
+        pnlContext.lineTo(padding.left + plotWidth, y);
+        pnlContext.stroke();
+        pnlContext.textAlign = 'right';
+        pnlContext.textBaseline = 'middle';
+        pnlContext.fillText(tick.toFixed(2), padding.left - 8, y);
+      });
+
+      bins.forEach((count, index) => {
+        const binLower = lower + (index / histogramBins) * (upper - lower);
+        const binUpper = lower + ((index + 1) / histogramBins) * (upper - lower);
+        const yTop = yFor(binUpper);
+        const yBottom = yFor(binLower);
+        pnlContext.fillStyle = count > 0 ? '#42a5ff' : 'rgba(66, 165, 255, 0.08)';
+        pnlContext.fillRect(padding.left, yTop + 1, Math.max(1, xForCount(count) - padding.left), Math.max(1, yBottom - yTop - 2));
+      });
+
+      const meanY = yFor(mean);
+      pnlContext.strokeStyle = '#35c98f';
+      pnlContext.lineWidth = 2;
+      pnlContext.beginPath();
+      pnlContext.moveTo(padding.left, meanY);
+      pnlContext.lineTo(padding.left + plotWidth, meanY);
+      pnlContext.stroke();
+      pnlContext.fillStyle = '#77e7ba';
+      pnlContext.textAlign = 'right';
+      pnlContext.textBaseline = 'bottom';
+      pnlContext.fillText(`mean ${mean.toFixed(2)}`, padding.left + plotWidth - 8, meanY - 5);
+
+      if (lower < 0 && upper > 0) {
+        const zeroY = yFor(0);
+        pnlContext.strokeStyle = '#ffcc66';
+        pnlContext.lineWidth = 2;
+        pnlContext.beginPath();
+        pnlContext.moveTo(padding.left, zeroY);
+        pnlContext.lineTo(padding.left + plotWidth, zeroY);
+        pnlContext.stroke();
+        pnlContext.fillStyle = '#ffdd88';
+        pnlContext.textAlign = 'right';
+        pnlContext.textBaseline = 'top';
+        pnlContext.fillText('0', padding.left + plotWidth - 8, zeroY + 5);
+      }
+
+      pnlContext.strokeStyle = '#344258';
+      pnlContext.lineWidth = 2;
+      pnlContext.beginPath();
+      pnlContext.moveTo(padding.left, padding.top);
+      pnlContext.lineTo(padding.left, padding.top + plotHeight);
+      pnlContext.lineTo(padding.left + plotWidth, padding.top + plotHeight);
+      pnlContext.stroke();
+
+      pnlContext.fillStyle = '#c9d6e7';
+      pnlContext.textAlign = 'center';
+      pnlContext.textBaseline = 'top';
+      pnlContext.fillText('paths', padding.left + plotWidth / 2, height - 18);
+      pnlContext.translate(14, padding.top + plotHeight / 2);
+      pnlContext.rotate(-Math.PI / 2);
+      pnlContext.textBaseline = 'middle';
+      pnlContext.fillText('PnL', 0, 0);
+      pnlContext.restore();
+
+      pnlMeanDisplay.textContent = `mean ${mean.toFixed(2)}`;
+      if (chartState.crosshair?.canvas === pnlCanvas) {
+        const point = chartState.crosshair;
+        const pathCount = ((point.x - padding.left) / plotWidth) * maxBin;
+        const pnl = upper - ((point.y - padding.top) / plotHeight) * (upper - lower);
+        drawCrosshair(pnlCanvas, pnlContext, chartState.pnlGeometry, {
+          x: `${Math.max(0, pathCount).toFixed(0)} paths`,
+          y: pnl.toFixed(2)
+        });
+      }
     }
 
     function drawQuoteLine(kind, cents, probability, color, padding, plotWidth, yFor) {
@@ -1483,6 +3122,17 @@
       requestDrawDistribution();
     }
 
+    function updateTradeUntilTFromStrikePoint(point) {
+      const geometry = chartState.strikeGeometry;
+      if (!geometry) return;
+
+      const rawSliderValue = (point.x - geometry.tLeft) / (geometry.tRight - geometry.tLeft);
+      const clampedSliderValue = Math.min(1, Math.max(0, rawSliderValue));
+      const timeRemaining = 1 - clampedSliderValue;
+      tradeUntilTSlider.value = (Math.round(timeRemaining * 100) / 100).toFixed(2);
+      requestDrawDistribution();
+    }
+
     function updateVwapFromStrikePoint(point) {
       const geometry = chartState.strikeGeometry;
       if (!geometry) return;
@@ -1507,7 +3157,11 @@
 
       if (onVwap) {
         chartState.vwapDragging = true;
-        strikeCanvas.setPointerCapture(event.pointerId);
+        try {
+          strikeCanvas.setPointerCapture(event.pointerId);
+        } catch {
+          // Synthetic pointer events may not have an active pointer to capture.
+        }
         updateVwapFromStrikePoint(point);
         event.preventDefault();
         return;
@@ -1515,9 +3169,17 @@
 
       if (!onTAxis) return;
 
-      chartState.tDragging = true;
-      strikeCanvas.setPointerCapture(event.pointerId);
-      updateTFromStrikePoint(point);
+      const tDistance = Math.abs(point.x - (geometry.tLeft + Number(tSlider.value) * (geometry.tRight - geometry.tLeft)));
+      const tradeUntilDistance = Math.abs(point.x - geometry.tradeUntilX);
+      chartState.tradeUntilTDragging = tradeUntilDistance < tDistance;
+      chartState.tDragging = !chartState.tradeUntilTDragging;
+      try {
+        strikeCanvas.setPointerCapture(event.pointerId);
+      } catch {
+        // Synthetic pointer events may not have an active pointer to capture.
+      }
+      if (chartState.tradeUntilTDragging) updateTradeUntilTFromStrikePoint(point);
+      else updateTFromStrikePoint(point);
       event.preventDefault();
     }
 
@@ -1527,15 +3189,66 @@
         return;
       }
 
+      if (chartState.tradeUntilTDragging) {
+        updateTradeUntilTFromStrikePoint(getStrikeCanvasPoint(event));
+        return;
+      }
+
       if (!chartState.tDragging) return;
       updateTFromStrikePoint(getStrikeCanvasPoint(event));
     }
 
     function handleStrikePointerUp(event) {
-      if (!chartState.tDragging && !chartState.vwapDragging) return;
+      if (!chartState.tDragging && !chartState.tradeUntilTDragging && !chartState.vwapDragging) return;
       chartState.tDragging = false;
+      chartState.tradeUntilTDragging = false;
       chartState.vwapDragging = false;
       if (strikeCanvas.hasPointerCapture(event.pointerId)) strikeCanvas.releasePointerCapture(event.pointerId);
+    }
+
+    function getImbalanceCanvasPoint(event) {
+      const rect = imbalanceCanvas.getBoundingClientRect();
+      return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+    }
+
+    function updateImbalanceParamFromPoint(point) {
+      const geometry = chartState.imbalanceGeometry;
+      if (!geometry) return;
+
+      const ratio = Math.min(1, Math.max(0, (point.x - geometry.padding.left) / geometry.plotWidth));
+      const value = geometry.paramMin + ratio * (geometry.paramMax - geometry.paramMin);
+      imbalanceParamSlider.value = clampSliderValue(imbalanceParamSlider, value) || imbalanceParamSlider.value;
+      requestDrawDistribution();
+    }
+
+    function handleImbalancePointerDown(event) {
+      const geometry = chartState.imbalanceGeometry;
+      if (!geometry) return;
+
+      const point = getImbalanceCanvasPoint(event);
+      const onParamAxis = point.x >= geometry.padding.left && point.x <= geometry.padding.left + geometry.plotWidth &&
+        point.y >= geometry.padding.top - 28 && point.y <= geometry.padding.top + 8;
+      if (!onParamAxis) return;
+
+      chartState.imbalanceParamDragging = true;
+      try {
+        imbalanceCanvas.setPointerCapture(event.pointerId);
+      } catch {
+        // Synthetic pointer events may not have an active pointer to capture.
+      }
+      updateImbalanceParamFromPoint(point);
+      event.preventDefault();
+    }
+
+    function handleImbalancePointerMove(event) {
+      if (!chartState.imbalanceParamDragging) return;
+      updateImbalanceParamFromPoint(getImbalanceCanvasPoint(event));
+    }
+
+    function handleImbalancePointerUp(event) {
+      if (!chartState.imbalanceParamDragging) return;
+      chartState.imbalanceParamDragging = false;
+      if (imbalanceCanvas.hasPointerCapture(event.pointerId)) imbalanceCanvas.releasePointerCapture(event.pointerId);
     }
 
     function drawGrid(width, height, padding, plotWidth, plotHeight, xFor, yForPrice, xMax, startPrice, lowerPrice, upperPrice) {
@@ -1821,6 +3534,28 @@
       if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
     }
 
+    function updateCrosshairForCanvas(targetCanvas, event) {
+      const rect = targetCanvas.getBoundingClientRect();
+      chartState.crosshair = {
+        canvas: targetCanvas,
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top
+      };
+      requestDrawDistribution();
+    }
+
+    function clearCrosshair(targetCanvas) {
+      if (chartState.crosshair?.canvas !== targetCanvas) return;
+      chartState.crosshair = null;
+      requestDrawDistribution();
+    }
+
+    function attachCrosshair(targetCanvas) {
+      targetCanvas.addEventListener('pointermove', (event) => updateCrosshairForCanvas(targetCanvas, event));
+      targetCanvas.addEventListener('pointerleave', () => clearCrosshair(targetCanvas));
+      targetCanvas.addEventListener('pointercancel', () => clearCrosshair(targetCanvas));
+    }
+
     sigmaSlider.addEventListener('input', (event) => syncSigma(event.target.value));
     startPriceInput.addEventListener('input', requestDrawDistribution);
     startPriceInput.addEventListener('blur', () => {
@@ -1833,11 +3568,24 @@
       requestDrawDistribution();
     });
     tSlider.addEventListener('input', requestDrawDistribution);
+    tradeUntilTSlider.addEventListener('input', requestDrawDistribution);
     positionSlider.addEventListener('input', requestDrawDistribution);
     skewQSlider.addEventListener('input', handleQuoteControlInput);
     spreadQSlider.addEventListener('input', handleQuoteControlInput);
     minEdgeQSlider.addEventListener('input', handleQuoteControlInput);
+    maxEdgeQSlider.addEventListener('input', handleQuoteControlInput);
+    nPathsSlider.addEventListener('input', handleSimulationControlInput);
+    nStepsSlider.addEventListener('input', handleSimulationControlInput);
+    exposureSplitsSlider.addEventListener('input', handleSimulationControlInput);
+    tradesPerStepSlider.addEventListener('input', handleSimulationControlInput);
     priceDistributionSelect.addEventListener('change', requestDrawDistribution);
+    imbalanceModeSelect.addEventListener('change', () => {
+      updateImbalanceParamControl(true);
+      requestDrawDistribution();
+    });
+    imbalanceParamSlider.addEventListener('input', requestDrawDistribution);
+    exposureFormulaSelect.addEventListener('change', requestDrawDistribution);
+    runSimulationButton.addEventListener('click', runMinimalSimulation);
     longButton.addEventListener('click', () => {
       chartState.side = 'long';
       updateSideButtons();
@@ -1857,11 +3605,20 @@
     strikeCanvas.addEventListener('pointermove', handleStrikePointerMove);
     strikeCanvas.addEventListener('pointerup', handleStrikePointerUp);
     strikeCanvas.addEventListener('pointercancel', handleStrikePointerUp);
+    imbalanceCanvas.addEventListener('pointerdown', handleImbalancePointerDown);
+    imbalanceCanvas.addEventListener('pointermove', handleImbalancePointerMove);
+    imbalanceCanvas.addEventListener('pointerup', handleImbalancePointerUp);
+    imbalanceCanvas.addEventListener('pointercancel', handleImbalancePointerUp);
+    [canvas, strikeCanvas, imbalanceCanvas, exposureCanvas, pnlCanvas].forEach(attachCrosshair);
     window.addEventListener('resize', requestDrawDistribution);
 
+    document.querySelectorAll('.editable-slider-value').forEach(makeSliderValueEditable);
+
     updateSideButtons();
-  syncSigma(sigmaSlider.value);
-  updateQuoteControlValues();
+    updateImbalanceParamControl(false);
+    syncSigma(sigmaSlider.value);
+    updateQuoteControlValues();
+    updateSimulationControlValues();
     drawDistribution();
   </script>
 </body>
